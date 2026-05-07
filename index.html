@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oxelyon — Innovate. Build. Elevate.</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #7B2FFF;
+    --purple2: #5B0FDF;
+    --purple-light: #A366FF;
+    --purple-pale: #F0E8FF;
+    --purple-pale2: #E8D8FF;
+    --black: #0A0A0F;
+    --ink: #1A1A2E;
+    --ink2: #2E2E48;
+    --mid: #6B6B88;
+    --muted: #9B9BB8;
+    --border: #E2DFF0;
+    --border2: #CBC7E8;
+    --bg: #FAFAFA;
+    --bg2: #F4F2FF;
+    --white: #FFFFFF;
+    --nav-bg: rgba(250,250,250,0.92);
+  }
+  [data-theme="dark"] {
+    --ink: #E8E8FF;
+    --ink2: #C8C8EE;
+    --mid: #9B9BB8;
+    --muted: #6B6B88;
+    --border: #2A2A40;
+    --border2: #3A3A58;
+    --bg: #0E0E1A;
+    --bg2: #12121F;
+    --white: #181828;
+    --purple-pale: rgba(123,47,255,0.15);
+    --purple-pale2: rgba(123,47,255,0.25);
+    --nav-bg: rgba(14,14,26,0.95);
+  }
+
+  /* Logo X arms - dark mode aware */
+  .ox-x-fill { fill: #111111; }
+  [data-theme="dark"] .ox-x-fill { fill: #CCCCEE; }
+
+  /* Theme toggle button */
+  .theme-toggle {
+    width:40px; height:40px; border-radius:10px;
+    background:var(--bg2); border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    cursor:none; transition:all 0.3s; font-size:17px;
+    flex-shrink:0;
+  }
+  .theme-toggle:hover { border-color:var(--purple); background:var(--purple-pale); }
+  .theme-toggle .icon-sun  { display:none; }
+  .theme-toggle .icon-moon { display:block; }
+  [data-theme="dark"] .theme-toggle .icon-sun  { display:block; }
+  [data-theme="dark"] .theme-toggle .icon-moon { display:none; }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── Cursor ── */
+  #cursor {
+    position:fixed; width:10px; height:10px;
+    background: var(--purple); border-radius:50%;
+    pointer-events:none; z-index:9999;
+    transform: translate(-50%,-50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: multiply;
+  }
+  #cursor-trail {
+    position:fixed; width:32px; height:32px;
+    border:1.5px solid var(--purple-light); border-radius:50%;
+    pointer-events:none; z-index:9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.12s ease;
+    opacity:0.6;
+  }
+  body:has(a:hover) #cursor,
+  body:has(button:hover) #cursor { width:18px; height:18px; }
+
+  /* ── Scroll progress ── */
+  #progress {
+    position:fixed; top:0; left:0; height:3px;
+    background: linear-gradient(90deg, var(--purple2), var(--purple-light));
+    z-index:1000; width:0%;
+    transition: width 0.1s;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position:fixed; top:0; width:100%; z-index:800;
+    padding:0 64px;
+    height:72px;
+    display:flex; align-items:center; justify-content:space-between;
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  nav.scrolled {
+    border-bottom-color: var(--border);
+    box-shadow: 0 4px 32px rgba(123,47,255,0.06);
+  }
+  .nav-logo-wrap { display:flex; align-items:center; gap:12px; }
+  .nav-logo-mark {
+    width:36px; height:36px;
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',monospace; font-size:12px; font-weight:900; color:#fff;
+  }
+  .nav-logo-text {
+    font-family:'Orbitron',monospace; font-weight:900;
+    font-size:20px; letter-spacing:3px;
+    color: var(--ink);
+  }
+  .nav-logo-text span { color: var(--purple); }
+  .nav-links { display:flex; gap:40px; list-style:none; }
+  .nav-links a {
+    text-decoration:none; color:var(--mid);
+    font-size:13px; font-weight:500; letter-spacing:0.5px;
+    transition:color 0.2s; position:relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; left:0;
+    width:0; height:2px; background:var(--purple);
+    border-radius:2px; transition:width 0.3s;
+  }
+  .nav-links a:hover { color:var(--purple); }
+  .nav-links a:hover::after { width:100%; }
+  .nav-cta {
+    background: var(--purple);
+    border:none; color:#fff;
+    padding:10px 28px; border-radius:6px;
+    font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+    letter-spacing:0.5px; cursor:none;
+    transition:all 0.3s; position:relative; overflow:hidden;
+  }
+  .nav-cta::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,var(--purple-light),var(--purple2));
+    opacity:0; transition:opacity 0.3s;
+  }
+  .nav-cta:hover::before { opacity:1; }
+  .nav-cta:hover { box-shadow:0 8px 24px rgba(123,47,255,0.35); transform:translateY(-1px); }
+  .nav-cta span { position:relative; z-index:1; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    padding-top:72px;
+    display:flex; align-items:center;
+    position:relative; overflow:hidden;
+    background: var(--white);
+  }
+
+  /* Geometric bg */
+  .hero-bg {
+    position:absolute; inset:0; overflow:hidden; pointer-events:none;
+  }
+  .hero-circle {
+    position:absolute; border-radius:50%;
+    border:1px solid rgba(123,47,255,0.08);
+  }
+  .hero-circle:nth-child(1){ width:700px;height:700px; right:-200px; top:-150px; }
+  .hero-circle:nth-child(2){ width:500px;height:500px; right:-100px; top:-50px; border-color:rgba(123,47,255,0.12); }
+  .hero-circle:nth-child(3){ width:300px;height:300px; right:50px; top:100px; border-color:rgba(123,47,255,0.16); background:radial-gradient(circle,rgba(123,47,255,0.04),transparent); }
+  .hero-dot-grid {
+    position:absolute; inset:0;
+    background-image: radial-gradient(rgba(123,47,255,0.15) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 60% 100% at 80% 50%, black 30%, transparent 70%);
+  }
+
+  .hero-inner {
+    max-width:1200px; margin:0 auto; padding:80px 64px;
+    display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;
+    position:relative; z-index:1; width:100%;
+  }
+  .hero-label {
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--purple-pale); border:1px solid var(--purple-pale2);
+    padding:6px 16px; border-radius:100px;
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:3px; color:var(--purple);
+    margin-bottom:28px;
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .hero-label-dot { width:6px;height:6px; border-radius:50%; background:var(--purple); animation:blink 1.5s infinite; }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+  h1.hero-title {
+    font-family:'Orbitron',monospace;
+    font-size: clamp(38px, 5vw, 68px);
+    font-weight:900; line-height:1.05;
+    color:var(--ink); margin-bottom:12px;
+    animation: fadeUp 0.8s 0.15s ease both;
+  }
+  h1.hero-title .accent { color:var(--purple); }
+  h1.hero-title .outline {
+    -webkit-text-stroke: 2px var(--purple);
+    color:transparent;
+  }
+  .hero-sub {
+    font-size:18px; font-weight:400; color:var(--mid);
+    line-height:1.75; margin-bottom:48px;
+    animation: fadeUp 0.8s 0.3s ease both;
+    max-width:480px;
+  }
+  .hero-btns {
+    display:flex; gap:16px; flex-wrap:wrap;
+    animation: fadeUp 0.8s 0.45s ease both;
+  }
+  .btn-primary {
+    background:var(--purple); color:#fff;
+    border:none; padding:14px 36px; border-radius:8px;
+    font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+    cursor:none; transition:all 0.3s; position:relative; overflow:hidden;
+  }
+  .btn-primary::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+    opacity:0; transition:opacity 0.3s;
+  }
+  .btn-primary:hover::after { opacity:1; }
+  .btn-primary:hover { box-shadow:0 12px 32px rgba(123,47,255,0.4); transform:translateY(-2px); }
+  .btn-ghost {
+    background:transparent; color:var(--ink);
+    border:1.5px solid var(--border2); padding:14px 36px; border-radius:8px;
+    font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+    cursor:none; transition:all 0.3s;
+    display:flex; align-items:center; gap:8px;
+  }
+  .btn-ghost:hover { border-color:var(--purple); color:var(--purple); }
+  .btn-arrow { transition:transform 0.3s; }
+  .btn-ghost:hover .btn-arrow { transform:translateX(4px); }
+
+  .hero-stats {
+    display:flex; gap:40px; margin-top:56px;
+    animation: fadeUp 0.8s 0.6s ease both;
+    padding-top:40px; border-top:1px solid var(--border);
+  }
+  .h-stat {}
+  .h-stat-num {
+    font-family:'Orbitron',monospace; font-size:28px; font-weight:900;
+    color:var(--ink); line-height:1;
+  }
+  .h-stat-num span { color:var(--purple); }
+  .h-stat-label { font-size:12px; color:var(--muted); margin-top:4px; letter-spacing:0.5px; }
+
+  /* Hero right — floating cards */
+  .hero-visual {
+    position:relative; height:520px;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-card {
+    position:absolute;
+    background:var(--white); border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    padding:24px; transition:transform 0.3s;
+  }
+  .hero-card:hover { transform:translateY(-6px) !important; }
+  .hc-main {
+    width:320px; top:40px; left:0;
+    animation: float1 4s ease-in-out infinite;
+  }
+  .hc-mini1 {
+    width:200px; top:0; right:0;
+    animation: float2 3.5s 0.5s ease-in-out infinite;
+  }
+  .hc-mini2 {
+    width:220px; bottom:60px; right:20px;
+    animation: float3 4.5s 1s ease-in-out infinite;
+  }
+  .hc-mini3 {
+    width:180px; bottom:20px; left:20px;
+    animation: float1 3.8s 0.3s ease-in-out infinite;
+  }
+  @keyframes float1{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+  @keyframes float2{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  @keyframes float3{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+  .hc-label {
+    font-family:'Space Mono',monospace; font-size:8px;
+    letter-spacing:3px; color:var(--purple); text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .hc-title {
+    font-family:'Orbitron',monospace; font-size:14px; font-weight:700;
+    color:var(--ink); margin-bottom:8px;
+  }
+  .hc-body { font-size:12px; color:var(--muted); line-height:1.6; }
+  .hc-bar { height:4px; border-radius:4px; background:var(--border); margin-top:16px; }
+  .hc-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--purple),var(--purple-light)); }
+  .hc-icon { font-size:28px; margin-bottom:10px; display:block; }
+  .hc-tag {
+    display:inline-block; background:var(--purple-pale);
+    color:var(--purple); font-size:9px; font-weight:600;
+    letter-spacing:1px; padding:3px 10px; border-radius:100px;
+    margin-top:10px;
+  }
+  .hc-dot-row { display:flex; gap:6px; margin-top:12px; }
+  .hc-dot { width:8px;height:8px; border-radius:50%; background:var(--border); }
+  .hc-dot.active { background:var(--purple); }
+
+  /* ── SECTION BASE ── */
+  .section-wrap { max-width:1200px; margin:0 auto; padding:120px 64px; }
+  .section-tag {
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:4px; color:var(--purple); text-transform:uppercase;
+    display:block; margin-bottom:16px;
+  }
+  .section-title {
+    font-family:'Orbitron',monospace;
+    font-size:clamp(28px,3.5vw,48px); font-weight:900;
+    color:var(--ink); line-height:1.1; margin-bottom:20px;
+  }
+  .section-title .accent { color:var(--purple); }
+  .section-desc { font-size:17px; color:var(--mid); line-height:1.8; max-width:520px; }
+
+  /* ── SERVICES ── */
+  #services { background:var(--bg2); }
+  .svc-header { text-align:center; margin-bottom:80px; }
+  .svc-header .section-desc { margin:0 auto; }
+  .svc-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  .svc-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:16px; padding:40px 36px;
+    transition:all 0.35s; cursor:none; position:relative; overflow:hidden;
+  }
+  .svc-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--purple),var(--purple-light));
+    transform:scaleX(0); transition:transform 0.4s; transform-origin:left;
+    border-radius:3px 3px 0 0;
+  }
+  .svc-card:hover { border-color:var(--purple-pale2); transform:translateY(-6px); box-shadow:0 20px 48px rgba(123,47,255,0.1); }
+  .svc-card:hover::before { transform:scaleX(1); }
+  .svc-icon-wrap {
+    width:56px; height:56px; border-radius:12px;
+    background:var(--purple-pale); display:flex; align-items:center; justify-content:center;
+    font-size:26px; margin-bottom:24px;
+    transition:background 0.3s, transform 0.3s;
+  }
+  .svc-card:hover .svc-icon-wrap { background:var(--purple); transform:scale(1.05); }
+  .svc-num { font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:3px; margin-bottom:16px; }
+  .svc-name { font-family:'Orbitron',monospace; font-size:15px; font-weight:700; color:var(--ink); margin-bottom:12px; }
+  .svc-desc { font-size:14px; color:var(--mid); line-height:1.75; }
+  .svc-pills { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+  .svc-pill {
+    font-size:10px; font-weight:600; letter-spacing:0.5px;
+    color:var(--purple); background:var(--purple-pale);
+    padding:4px 12px; border-radius:100px;
+    border:1px solid var(--purple-pale2);
+  }
+
+  /* ── PROCESS ── */
+  #process { background:var(--white); }
+  .process-wrap { display:grid; grid-template-columns:1fr 1.4fr; gap:100px; align-items:center; }
+  .process-steps { display:flex; flex-direction:column; gap:0; }
+  .p-step {
+    display:flex; gap:28px; align-items:flex-start;
+    padding:36px 0; border-bottom:1px solid var(--border);
+    transition:all 0.3s; cursor:none;
+  }
+  .p-step:last-child { border-bottom:none; }
+  .p-step:hover .p-num-wrap { background:var(--purple); }
+  .p-step:hover .p-num { color:#fff; }
+  .p-num-wrap {
+    width:48px; height:48px; border-radius:10px;
+    background:var(--purple-pale); display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:background 0.3s;
+  }
+  .p-num { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--purple); transition:color 0.3s; }
+  .p-body h3 { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+  .p-body p { font-size:14px; color:var(--mid); line-height:1.75; }
+
+  .process-right { position:relative; }
+  .process-mockup {
+    background:var(--white); border:1px solid var(--border); border-radius:20px;
+    overflow:hidden; box-shadow:0 24px 64px rgba(123,47,255,0.08);
+  }
+  .pm-topbar {
+    background:var(--ink); padding:16px 24px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .pm-dot { width:10px; height:10px; border-radius:50%; }
+  .pm-dot:nth-child(1){background:#FF5F56;}
+  .pm-dot:nth-child(2){background:#FFBD2E;}
+  .pm-dot:nth-child(3){background:#27C93F;}
+  .pm-title-bar { margin-left:12px; font-family:'Space Mono',monospace; font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:2px; }
+  .pm-body { padding:32px; background:var(--bg); }
+  .pm-section-title { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--muted); margin-bottom:16px; }
+  .pm-stat-row { display:flex; gap:16px; margin-bottom:20px; }
+  .pm-stat-box {
+    flex:1; background:var(--white); border:1px solid var(--border); border-radius:10px; padding:16px;
+  }
+  .pm-stat-val { font-family:'Orbitron',monospace; font-size:20px; font-weight:700; color:var(--ink); }
+  .pm-stat-val.purple { color:var(--purple); }
+  .pm-stat-lbl { font-size:10px; color:var(--muted); margin-top:4px; }
+  .pm-progress-row { margin-bottom:12px; }
+  .pm-prog-label { display:flex; justify-content:space-between; font-size:11px; color:var(--mid); margin-bottom:6px; }
+  .pm-prog-bar { height:6px; background:var(--border); border-radius:6px; }
+  .pm-prog-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,var(--purple),var(--purple-light)); }
+  .pm-badge {
+    position:absolute; top:-16px; right:-16px;
+    background:var(--purple); color:#fff; border-radius:12px; padding:14px 20px;
+    box-shadow:0 8px 24px rgba(123,47,255,0.3);
+    font-family:'Orbitron',monospace; font-size:11px; font-weight:700;
+    animation: float2 3s ease-in-out infinite;
+  }
+  .pm-badge div:first-child { font-size:22px; font-weight:900; }
+
+  /* ── TECH ── */
+  #tech { background:var(--bg2); overflow:hidden; }
+  .tech-header { text-align:center; margin-bottom:60px; }
+  .tech-header .section-desc { margin:0 auto; }
+  .marquee-row { display:flex; gap:16px; width:max-content; margin-bottom:16px; }
+  .marquee-row.a1 { animation:mq 22s linear infinite; }
+  .marquee-row.a2 { animation:mq 18s linear infinite reverse; }
+  @keyframes mq { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .tech-chip {
+    background:var(--white); border:1px solid var(--border); border-radius:10px;
+    padding:12px 24px; display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:600; color:var(--ink2); white-space:nowrap;
+    transition:all 0.3s; flex-shrink:0;
+  }
+  .tech-chip:hover { border-color:var(--purple-pale2); color:var(--purple); background:var(--purple-pale); }
+  .tc-icon { font-size:16px; }
+
+  /* ── WHY ── */
+  #why { background:var(--white); }
+  .why-layout { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+  .why-left {}
+  .why-big {
+    margin-top:48px;
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+    border-radius:20px; padding:48px;
+    color:#fff; position:relative; overflow:hidden;
+  }
+  .why-big::before {
+    content:''; position:absolute; right:-40px; bottom:-40px;
+    width:200px; height:200px; border-radius:50%;
+    background:rgba(255,255,255,0.06);
+  }
+  .why-big-num { font-family:'Orbitron',monospace; font-size:72px; font-weight:900; line-height:1; }
+  .why-big-label { font-size:16px; opacity:0.8; margin-top:8px; }
+  .why-big-sub { font-size:13px; opacity:0.6; margin-top:8px; }
+  .why-cards { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .why-card {
+    background:var(--bg); border:1px solid var(--border); border-radius:14px;
+    padding:28px; transition:all 0.3s; cursor:none;
+  }
+  .why-card:hover { border-color:var(--purple-pale2); box-shadow:0 8px 24px rgba(123,47,255,0.08); background:var(--white); }
+  .wc-icon { font-size:28px; margin-bottom:16px; display:block; }
+  .wc-title { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+  .wc-text { font-size:13px; color:var(--mid); line-height:1.7; }
+
+  /* ── TESTIMONIALS ── */
+  #testimonials { background:var(--bg2); }
+  .test-head { text-align:center; margin-bottom:80px; }
+  .test-head .section-desc { margin:0 auto; }
+  .test-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .test-card {
+    background:var(--white); border:1px solid var(--border); border-radius:16px;
+    padding:40px; transition:all 0.3s; cursor:none;
+  }
+  .test-card:hover { border-color:var(--purple-pale2); transform:translateY(-4px); box-shadow:0 16px 40px rgba(123,47,255,0.08); }
+  .test-stars { color:var(--purple); font-size:14px; margin-bottom:20px; letter-spacing:2px; }
+  .test-quote { font-size:15px; color:var(--ink2); line-height:1.8; margin-bottom:32px; font-style:italic; }
+  .test-author { display:flex; align-items:center; gap:14px; border-top:1px solid var(--border); padding-top:24px; }
+  .test-av {
+    width:44px; height:44px; border-radius:10px;
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',monospace; font-size:13px; font-weight:700; color:#fff;
+  }
+  .test-name { font-family:'Orbitron',monospace; font-size:11px; color:var(--ink); font-weight:700; }
+  .test-role { font-size:11px; color:var(--muted); margin-top:3px; }
+
+  /* ── CTA ── */
+  #cta {
+    background: var(--ink);
+    position:relative; overflow:hidden;
+  }
+  #cta::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(123,47,255,0.25), transparent);
+  }
+  .cta-grid {
+    position:absolute; inset:0;
+    background-image: linear-gradient(rgba(123,47,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(123,47,255,0.05) 1px,transparent 1px);
+    background-size:48px 48px;
+  }
+  .cta-inner { position:relative; z-index:1; text-align:center; }
+  .cta-tag { color:var(--purple-light) !important; }
+  .cta-title { font-family:'Orbitron',monospace; font-size:clamp(30px,5vw,64px); font-weight:900; color:#fff; line-height:1.1; margin-bottom:20px; }
+  .cta-title .accent { color:var(--purple-light); }
+  .cta-sub { font-size:18px; color:rgba(255,255,255,0.5); line-height:1.75; max-width:500px; margin:0 auto 56px; }
+  .cta-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+  .btn-white { background:#fff; color:var(--purple); border:none; padding:14px 40px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:700; cursor:none; transition:all 0.3s; }
+  .btn-white:hover { box-shadow:0 8px 32px rgba(255,255,255,0.2); transform:translateY(-2px); }
+  .btn-outline-white { background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.25); padding:14px 40px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:none; transition:all 0.3s; }
+  .btn-outline-white:hover { border-color:#fff; }
+
+  /* ── FOOTER ── */
+  footer {
+    background:var(--white); border-top:1px solid var(--border);
+    padding:80px 64px 40px;
+  }
+  .footer-inner { max-width:1200px; margin:0 auto; }
+  .footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:60px; margin-bottom:64px; }
+  .footer-brand-desc { font-size:14px; color:var(--muted); line-height:1.8; margin-top:16px; max-width:260px; }
+  .footer-col-title { font-family:'Orbitron',monospace; font-size:10px; letter-spacing:3px; color:var(--ink); text-transform:uppercase; margin-bottom:20px; }
+  .footer-col-links { list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .footer-col-links a { text-decoration:none; color:var(--muted); font-size:14px; transition:color 0.2s; }
+  .footer-col-links a:hover { color:var(--purple); }
+  .footer-bottom { border-top:1px solid var(--border); padding-top:32px; display:flex; justify-content:space-between; align-items:center; }
+  .footer-copy { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); }
+  .footer-socials { display:flex; gap:12px; }
+  .soc-btn {
+    width:36px; height:36px; border-radius:8px;
+    border:1px solid var(--border); background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--muted); text-decoration:none;
+    transition:all 0.3s; cursor:none; font-weight:700;
+  }
+  .soc-btn:hover { border-color:var(--purple); color:var(--purple); background:var(--purple-pale); }
+
+  /* ── Reveal ── */
+  .reveal { opacity:0; transform:translateY(32px); transition:opacity 0.75s ease, transform 0.75s ease; }
+  .reveal.up { opacity:1; transform:none; }
+  .reveal-l { opacity:0; transform:translateX(-32px); transition:opacity 0.75s, transform 0.75s; }
+  .reveal-l.up { opacity:1; transform:none; }
+  .reveal-r { opacity:0; transform:translateX(32px); transition:opacity 0.75s, transform 0.75s; }
+  .reveal-r.up { opacity:1; transform:none; }
+  .d1 { transition-delay:0.1s!important; }
+  .d2 { transition-delay:0.2s!important; }
+  .d3 { transition-delay:0.3s!important; }
+  .d4 { transition-delay:0.4s!important; }
+  .d5 { transition-delay:0.5s!important; }
+
+  /* ── WORK SHOWCASE ── */
+  #work { background: var(--ink); position:relative; overflow:hidden; }
+  #work::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(123,47,255,0.15), transparent);
+    pointer-events:none;
+  }
+  .work-grid-bg {
+    position:absolute; inset:0;
+    background-image: linear-gradient(rgba(123,47,255,0.04) 1px,transparent 1px),
+                      linear-gradient(90deg,rgba(123,47,255,0.04) 1px,transparent 1px);
+    background-size:48px 48px; pointer-events:none;
+  }
+  .work-header { text-align:center; margin-bottom:72px; position:relative; z-index:1; }
+  .work-header .section-tag { color:var(--purple-light) !important; }
+  .work-header .section-title { color:#fff; }
+  .work-header .section-desc { color:rgba(255,255,255,0.45); margin:0 auto; }
+
+  .work-filter { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:56px; position:relative; z-index:1; }
+  .wf-btn {
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px;
+    padding:8px 20px; border-radius:100px; border:1px solid rgba(255,255,255,0.15);
+    background:transparent; color:rgba(255,255,255,0.45); cursor:none; transition:all 0.25s;
+  }
+  .wf-btn:hover, .wf-btn.active {
+    background:var(--purple); border-color:var(--purple); color:#fff;
+  }
+
+  .work-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+    position:relative; z-index:1;
+  }
+  .work-card {
+    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+    border-radius:20px; overflow:hidden; cursor:none;
+    transition:all 0.4s; position:relative;
+  }
+  .work-card:hover { border-color:rgba(123,47,255,0.5); transform:translateY(-8px); box-shadow:0 24px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(123,47,255,0.2); }
+  .work-card-featured { grid-column:span 2; }
+
+  .work-thumb {
+    height:220px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .work-card-featured .work-thumb { height:260px; }
+  .work-thumb-bg {
+    position:absolute; inset:0; transition:transform 0.5s ease;
+  }
+  .work-card:hover .work-thumb-bg { transform:scale(1.06); }
+  .wt-1 { background:linear-gradient(135deg, #1a0533 0%, #3d0f7a 50%, #1a1a3e 100%); }
+  .wt-2 { background:linear-gradient(135deg, #0a1628 0%, #0f3460 50%, #16213e 100%); }
+  .wt-3 { background:linear-gradient(135deg, #0d2a1f 0%, #0a4a2f 50%, #112920 100%); }
+  .wt-4 { background:linear-gradient(135deg, #1a1205 0%, #4a2c0a 50%, #2a1a08 100%); }
+  .wt-5 { background:linear-gradient(135deg, #1a0520 0%, #3d0f5a 50%, #0f0520 100%); }
+
+  .work-thumb-ui {
+    position:relative; z-index:1; width:85%; padding:16px;
+    background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);
+    border-radius:12px; backdrop-filter:blur(8px);
+  }
+  .wtu-bar { display:flex; gap:6px; margin-bottom:12px; }
+  .wtu-dot { width:7px; height:7px; border-radius:50%; }
+  .wtu-dot:nth-child(1){background:#FF5F56;} .wtu-dot:nth-child(2){background:#FFBD2E;} .wtu-dot:nth-child(3){background:#27C93F;}
+  .wtu-line { height:6px; border-radius:4px; margin-bottom:8px; }
+  .wtu-line:last-child { margin-bottom:0; }
+  .wtu-l1 { background:rgba(255,255,255,0.2); width:80%; }
+  .wtu-l2 { background:rgba(123,47,255,0.6); width:55%; }
+  .wtu-l3 { background:rgba(255,255,255,0.1); width:70%; }
+  .wtu-row { display:flex; gap:8px; margin-top:10px; }
+  .wtu-box { height:32px; border-radius:6px; background:rgba(123,47,255,0.35); flex:1; }
+  .wtu-box2 { height:32px; border-radius:6px; background:rgba(255,255,255,0.08); flex:2; }
+
+  .work-tag-badge {
+    position:absolute; top:16px; left:16px; z-index:2;
+    font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px;
+    padding:5px 12px; border-radius:100px;
+    background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.15);
+    color:rgba(255,255,255,0.7); backdrop-filter:blur(8px);
+  }
+  .work-hover-overlay {
+    position:absolute; inset:0; z-index:3;
+    background:linear-gradient(to top, rgba(123,47,255,0.85), transparent 60%);
+    opacity:0; transition:opacity 0.35s; display:flex; align-items:flex-end; padding:24px;
+  }
+  .work-card:hover .work-hover-overlay { opacity:1; }
+  .who-link {
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px;
+    color:#fff; display:flex; align-items:center; gap:8px;
+    text-decoration:none;
+  }
+  .who-link span { transition:transform 0.25s; }
+  .work-card:hover .who-link span { transform:translateX(4px); }
+
+  .work-info { padding:24px 28px 28px; }
+  .work-info-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .work-category {
+    font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px;
+    color:var(--purple-light);
+  }
+  .work-year { font-family:'Space Mono',monospace; font-size:8px; color:rgba(255,255,255,0.3); }
+  .work-title { font-family:'Orbitron',monospace; font-size:15px; font-weight:700; color:#fff; margin-bottom:8px; line-height:1.3; }
+  .work-desc { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.7; margin-bottom:16px; }
+  .work-pills { display:flex; flex-wrap:wrap; gap:7px; }
+  .work-pill {
+    font-size:9px; font-weight:600; letter-spacing:0.5px;
+    padding:3px 10px; border-radius:100px;
+    background:rgba(123,47,255,0.2); color:var(--purple-light);
+    border:1px solid rgba(123,47,255,0.3);
+  }
+
+  .work-footer { text-align:center; margin-top:64px; position:relative; z-index:1; }
+  .work-count-line {
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px;
+    color:rgba(255,255,255,0.3); margin-bottom:32px;
+  }
+  .btn-portfolio {
+    display:inline-flex; align-items:center; gap:12px;
+    background:var(--purple); color:#fff; text-decoration:none;
+    padding:16px 48px; border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700;
+    transition:all 0.3s; position:relative; overflow:hidden;
+  }
+  .btn-portfolio::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,var(--purple-light),var(--purple2));
+    opacity:0; transition:opacity 0.3s;
+  }
+  .btn-portfolio:hover::before { opacity:1; }
+  .btn-portfolio:hover { box-shadow:0 16px 40px rgba(123,47,255,0.45); transform:translateY(-2px); }
+  .btn-portfolio span { position:relative; z-index:1; }
+  .btn-portfolio-arrow { position:relative; z-index:1; transition:transform 0.3s; font-size:18px; }
+  .btn-portfolio:hover .btn-portfolio-arrow { transform:translateX(5px); }
+
+
+  #embedded { background: var(--white); }
+  .emb-header { text-align:center; margin-bottom:80px; }
+  .emb-header .section-desc { margin:0 auto; }
+
+  .emb-showcase {
+    display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:32px;
+  }
+  .emb-hero-card {
+    grid-column: span 2;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--ink2) 100%);
+    border-radius:20px; padding:56px; position:relative; overflow:hidden;
+    display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+    border:1px solid rgba(123,47,255,0.2);
+  }
+  .emb-hero-card::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 50% 80% at 80% 50%, rgba(123,47,255,0.18), transparent);
+  }
+  .emb-hero-card::after {
+    content:''; position:absolute; top:-60px; right:-60px;
+    width:300px; height:300px; border-radius:50%;
+    border:1px solid rgba(123,47,255,0.12);
+  }
+  .emb-hero-text { position:relative; z-index:1; }
+  .emb-hero-label {
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:4px;
+    color:var(--purple-light); margin-bottom:16px; display:block;
+  }
+  .emb-hero-title {
+    font-family:'Orbitron',monospace; font-size:clamp(22px,2.8vw,36px);
+    font-weight:900; color:#fff; line-height:1.15; margin-bottom:16px;
+  }
+  .emb-hero-desc { font-size:15px; color:rgba(255,255,255,0.55); line-height:1.8; margin-bottom:32px; }
+  .emb-hero-pills { display:flex; gap:10px; flex-wrap:wrap; }
+  .emb-pill {
+    font-size:10px; font-weight:600; letter-spacing:0.5px;
+    padding:5px 14px; border-radius:100px;
+    background:rgba(123,47,255,0.25); color:var(--purple-light);
+    border:1px solid rgba(123,47,255,0.35);
+  }
+  .emb-hero-visual { position:relative; z-index:1; }
+  .emb-pcb-mock {
+    background:rgba(0,0,0,0.4); border:1px solid rgba(123,47,255,0.3);
+    border-radius:16px; padding:28px;
+    font-family:'Space Mono',monospace; font-size:10px; color:rgba(255,255,255,0.5);
+    position:relative; overflow:hidden;
+  }
+  .emb-pcb-mock::before {
+    content:''; position:absolute; inset:0;
+    background-image: linear-gradient(rgba(123,47,255,0.06) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(123,47,255,0.06) 1px, transparent 1px);
+    background-size:20px 20px;
+  }
+  .emb-pcb-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; position:relative; z-index:1; }
+  .emb-pcb-row:last-child { margin-bottom:0; }
+  .emb-led { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .emb-led.green { background:#27C93F; box-shadow:0 0 6px #27C93F; animation:blink 2s infinite; }
+  .emb-led.blue { background:#4DA6FF; box-shadow:0 0 6px #4DA6FF; animation:blink 2.5s 0.5s infinite; }
+  .emb-led.purple { background:var(--purple-light); box-shadow:0 0 6px var(--purple-light); animation:blink 1.8s 0.8s infinite; }
+  .emb-led.amber { background:#FFB347; box-shadow:0 0 6px #FFB347; }
+  .emb-pcb-line { font-size:9px; letter-spacing:1px; }
+  .emb-pcb-val { margin-left:auto; color:var(--purple-light); font-weight:700; font-size:9px; }
+
+  .emb-sub-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .emb-sub-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:16px;
+    padding:36px 32px; transition:all 0.35s; cursor:none; position:relative; overflow:hidden;
+  }
+  .emb-sub-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--purple),var(--purple-light));
+    transform:scaleX(0); transition:transform 0.4s; transform-origin:left;
+  }
+  .emb-sub-card:hover { border-color:var(--purple-pale2); transform:translateY(-6px); box-shadow:0 20px 48px rgba(123,47,255,0.1); background:var(--white); }
+  .emb-sub-card:hover::before { transform:scaleX(1); }
+  .emb-sub-icon {
+    width:52px; height:52px; border-radius:12px;
+    background:var(--purple-pale); display:flex; align-items:center; justify-content:center;
+    font-size:24px; margin-bottom:20px; transition:background 0.3s, transform 0.3s;
+  }
+  .emb-sub-card:hover .emb-sub-icon { background:var(--purple); transform:scale(1.05); }
+  .emb-sub-num { font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:3px; margin-bottom:12px; }
+  .emb-sub-name { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--ink); margin-bottom:10px; }
+  .emb-sub-desc { font-size:13px; color:var(--mid); line-height:1.75; }
+  .emb-sub-pills { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .emb-sub-pill {
+    font-size:10px; font-weight:600; letter-spacing:0.5px;
+    color:var(--purple); background:var(--purple-pale);
+    padding:4px 12px; border-radius:100px;
+    border:1px solid var(--purple-pale2);
+  }
+
+  /* ── CONTACT MODAL ── */
+  .modal-overlay {
+    position:fixed; inset:0; z-index:2000;
+    background:rgba(10,10,15,0.7); backdrop-filter:blur(12px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 0.35s ease;
+    padding:20px;
+  }
+  .modal-overlay.open { opacity:1; pointer-events:all; }
+  .modal-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:24px; width:100%; max-width:600px;
+    box-shadow:0 40px 100px rgba(123,47,255,0.2), 0 0 0 1px rgba(123,47,255,0.06);
+    overflow:hidden; transform:scale(0.92) translateY(24px);
+    transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    position:relative; max-height:90vh; overflow-y:auto;
+  }
+  .modal-overlay.open .modal-card { transform:scale(1) translateY(0); }
+  .modal-top {
+    background:linear-gradient(135deg,var(--ink),var(--ink2));
+    padding:40px 48px 36px; position:relative; overflow:hidden;
+  }
+  .modal-top::before {
+    content:''; position:absolute; right:-60px; top:-60px;
+    width:240px; height:240px; border-radius:50%;
+    background:radial-gradient(circle,rgba(123,47,255,0.25),transparent);
+  }
+  .modal-top-label {
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:4px;
+    color:var(--purple-light); margin-bottom:12px; display:block; position:relative; z-index:1;
+  }
+  .modal-title {
+    font-family:'Orbitron',monospace; font-size:26px; font-weight:900;
+    color:#fff; margin-bottom:10px; position:relative; z-index:1;
+  }
+  .modal-subtitle { font-size:14px; color:rgba(255,255,255,0.5); line-height:1.7; position:relative; z-index:1; }
+  .modal-close {
+    position:absolute; top:20px; right:24px; width:36px; height:36px;
+    border-radius:8px; background:rgba(255,255,255,0.1); border:none;
+    color:#fff; font-size:18px; cursor:none; z-index:10;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s;
+  }
+  .modal-close:hover { background:rgba(255,255,255,0.2); }
+  .modal-body { padding:40px 48px 48px; }
+  .modal-contact-row {
+    display:flex; gap:16px; margin-bottom:40px;
+  }
+  .modal-contact-chip {
+    display:flex; align-items:center; gap:10px;
+    background:var(--bg2); border:1px solid var(--border); border-radius:10px;
+    padding:14px 18px; flex:1;
+  }
+  .mcc-icon { font-size:18px; }
+  .mcc-label { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px; color:var(--muted); }
+  .mcc-val { font-size:13px; font-weight:600; color:var(--ink); margin-top:2px; }
+  .modal-form-group { margin-bottom:20px; }
+  .modal-form-group label {
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px;
+    color:var(--muted); display:block; margin-bottom:8px;
+  }
+  .modal-form-group input,
+  .modal-form-group textarea,
+  .modal-form-group select {
+    width:100%; background:var(--bg); border:1.5px solid var(--border);
+    border-radius:10px; padding:14px 16px;
+    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--ink);
+    transition:border-color 0.25s, box-shadow 0.25s; outline:none;
+    appearance:none; cursor:none;
+  }
+  .modal-form-group input:focus,
+  .modal-form-group textarea:focus,
+  .modal-form-group select:focus {
+    border-color:var(--purple); box-shadow:0 0 0 3px rgba(123,47,255,0.1);
+  }
+  .modal-form-group textarea { resize:vertical; min-height:110px; }
+  .modal-form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .modal-submit {
+    width:100%; background:var(--purple); color:#fff; border:none;
+    padding:16px; border-radius:10px; font-family:'DM Sans',sans-serif;
+    font-size:15px; font-weight:700; cursor:none; transition:all 0.3s;
+    position:relative; overflow:hidden; margin-top:8px;
+  }
+  .modal-submit::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,var(--purple-light),var(--purple2));
+    opacity:0; transition:opacity 0.3s;
+  }
+  .modal-submit:hover::before { opacity:1; }
+  .modal-submit:hover { box-shadow:0 12px 32px rgba(123,47,255,0.4); transform:translateY(-2px); }
+  .modal-submit span { position:relative; z-index:1; }
+  .modal-note { font-size:12px; color:var(--muted); text-align:center; margin-top:16px; line-height:1.6; }
+  .modal-success {
+    display:none; text-align:center; padding:32px 0 16px;
+  }
+  .modal-success.show { display:block; }
+  .modal-success-icon { font-size:52px; margin-bottom:16px; display:block; }
+  .modal-success-title { font-family:'Orbitron',monospace; font-size:20px; font-weight:900; color:var(--ink); margin-bottom:10px; }
+  .modal-success-text { font-size:15px; color:var(--mid); line-height:1.75; }
+
+  @media(max-width:960px){
+    nav { padding:0 24px; }
+    .nav-links { display:none; }
+    .hero-inner { grid-template-columns:1fr; gap:60px; padding:60px 24px; }
+    .hero-visual { display:none; }
+    .section-wrap { padding:80px 24px; }
+    .svc-grid { grid-template-columns:1fr; }
+    .process-wrap { grid-template-columns:1fr; gap:60px; }
+    .why-layout { grid-template-columns:1fr; gap:60px; }
+    .why-cards { grid-template-columns:1fr 1fr; }
+    .test-grid { grid-template-columns:1fr; }
+    .footer-top { grid-template-columns:1fr 1fr; gap:40px; }
+    footer { padding:60px 24px 32px; }
+    .work-grid { grid-template-columns:1fr; }
+    .work-card-featured { grid-column:span 1; }
+    .emb-hero-card { grid-column:span 1; grid-template-columns:1fr; }
+    .emb-sub-grid { grid-template-columns:1fr; }
+    .emb-showcase { grid-template-columns:1fr; }
+    .modal-body { padding:28px 24px 32px; }
+    .modal-top { padding:32px 24px 28px; }
+    .modal-contact-row { flex-direction:column; }
+    .modal-form-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<div id="progress"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo-wrap">
+    <div class="nav-logo-text">OXEL<span>Y</span>ON</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#embedded">Embedded</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#tech">Tech Stack</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#testimonials">Clients</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+      <span class="icon-moon">🌙</span>
+      <span class="icon-sun">☀️</span>
+    </button>
+    <button class="nav-cta" onclick="openModal()"><span>Get a Quote →</span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="hero-circle"></div>
+    <div class="hero-circle"></div>
+    <div class="hero-circle"></div>
+    <div class="hero-dot-grid"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-label"><span class="hero-label-dot"></span>NEXT-GEN SOFTWARE STUDIO</div>
+      <h1 class="hero-title">
+        We Build<br>
+        <span class="accent">Digital</span><br>
+        <span class="outline">Futures.</span>
+      </h1>
+      <p class="hero-sub">From blazing web apps to enterprise ERP — Oxelyon engineers transformative digital products that scale with your ambitions.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="openModal()">Start a Project</button>
+        <button class="btn-ghost" onclick="document.getElementById('work').scrollIntoView({behavior:'smooth'})">Explore Work <span class="btn-arrow">→</span></button>
+      </div>
+      <div class="hero-stats">
+        <div class="h-stat">
+          <div class="h-stat-num"><span id="c1">0</span>+</div>
+          <div class="h-stat-label">Projects Delivered</div>
+        </div>
+        <div class="h-stat">
+          <div class="h-stat-num"><span id="c2">0</span>%</div>
+          <div class="h-stat-label">Client Satisfaction</div>
+        </div>
+        <div class="h-stat">
+          <div class="h-stat-num"><span id="c3">0</span>+</div>
+          <div class="h-stat-label">Industries Served</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card hc-main">
+        <div class="hc-label">Current Sprint</div>
+        <div class="hc-title">E-Commerce Platform</div>
+        <div class="hc-body">React + Node.js · Sprint 4/6</div>
+        <div class="hc-bar"><div class="hc-bar-fill" style="width:68%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <span style="font-size:10px;color:var(--muted);">68% Complete</span>
+          <span style="font-size:10px;color:var(--purple);font-weight:600;">On Track</span>
+        </div>
+      </div>
+      <div class="hero-card hc-mini1">
+        <span class="hc-icon">🤖</span>
+        <div class="hc-title">Bot Live</div>
+        <div class="hc-body">Processing 1,240 tasks/hr</div>
+        <div class="hc-tag">AUTOMATION</div>
+      </div>
+      <div class="hero-card hc-mini2">
+        <div class="hc-label">Performance</div>
+        <div class="hc-title">99.9% Uptime</div>
+        <div class="hc-dot-row">
+          <div class="hc-dot active"></div><div class="hc-dot active"></div>
+          <div class="hc-dot active"></div><div class="hc-dot active"></div>
+          <div class="hc-dot"></div>
+        </div>
+      </div>
+      <div class="hero-card hc-mini3">
+        <span class="hc-icon">📱</span>
+        <div class="hc-title">App Launched</div>
+        <div class="hc-tag">10K USERS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-wrap">
+    <div class="svc-header reveal">
+      <span class="section-tag">// what we build</span>
+      <h2 class="section-title">Complete <span class="accent">Digital Solutions</span></h2>
+      <p class="section-desc">Every product, every platform, every automation — built with precision for lasting impact.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card reveal d1">
+        <div class="svc-num">01 ——</div>
+        <div class="svc-icon-wrap">🌐</div>
+        <div class="svc-name">Web Applications</div>
+        <p class="svc-desc">High-performance, scalable web apps engineered for exceptional user experiences and rapid business growth.</p>
+        <div class="svc-pills"><span class="svc-pill">React</span><span class="svc-pill">Next.js</span><span class="svc-pill">Node.js</span></div>
+      </div>
+      <div class="svc-card reveal d2">
+        <div class="svc-num">02 ——</div>
+        <div class="svc-icon-wrap">📱</div>
+        <div class="svc-name">Mobile Applications</div>
+        <p class="svc-desc">Native & cross-platform apps for iOS and Android with seamless, intuitive experiences your users love.</p>
+        <div class="svc-pills"><span class="svc-pill">Flutter</span><span class="svc-pill">React Native</span></div>
+      </div>
+      <div class="svc-card reveal d3">
+        <div class="svc-num">03 ——</div>
+        <div class="svc-icon-wrap">🖥️</div>
+        <div class="svc-name">Desktop Applications</div>
+        <p class="svc-desc">Powerful desktop software for Windows, macOS & Linux — tools that match exactly how your team works.</p>
+        <div class="svc-pills"><span class="svc-pill">Electron</span><span class="svc-pill">Tauri</span><span class="svc-pill">.NET</span></div>
+      </div>
+      <div class="svc-card reveal d1">
+        <div class="svc-num">04 ——</div>
+        <div class="svc-icon-wrap">🤖</div>
+        <div class="svc-name">Automation Bots</div>
+        <p class="svc-desc">Intelligent bots that eliminate repetitive tasks, cut costs dramatically, and run 24/7 without breaking a sweat.</p>
+        <div class="svc-pills"><span class="svc-pill">RPA</span><span class="svc-pill">AI Agents</span><span class="svc-pill">Python</span></div>
+      </div>
+      <div class="svc-card reveal d2">
+        <div class="svc-num">05 ——</div>
+        <div class="svc-icon-wrap">🏢</div>
+        <div class="svc-name">ERP Software</div>
+        <p class="svc-desc">Custom enterprise platforms that unify your operations, finance, HR, and supply chain into one intelligent system.</p>
+        <div class="svc-pills"><span class="svc-pill">Odoo</span><span class="svc-pill">Custom ERP</span><span class="svc-pill">Cloud</span></div>
+      </div>
+      <div class="svc-card reveal d3">
+        <div class="svc-num">06 ——</div>
+        <div class="svc-icon-wrap">☁️</div>
+        <div class="svc-name">Cloud & DevOps</div>
+        <p class="svc-desc">End-to-end cloud architecture and CI/CD automation for modern, resilient, and infinitely scalable deployments.</p>
+        <div class="svc-pills"><span class="svc-pill">AWS</span><span class="svc-pill">Docker</span><span class="svc-pill">K8s</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EMBEDDED SYSTEMS -->
+<section id="embedded">
+  <div class="section-wrap">
+    <div class="emb-header reveal">
+      <span class="section-tag">// hardware meets software</span>
+      <h2 class="section-title">Embedded <span class="accent">Engineering</span></h2>
+      <p class="section-desc">From silicon to system — we design, prototype, and deploy intelligent embedded solutions that power the physical world.</p>
+    </div>
+
+    <div class="emb-showcase">
+      <!-- Hero PCB card spans full width -->
+      <div class="emb-hero-card reveal">
+        <div class="emb-hero-text">
+          <span class="emb-hero-label">// flagship capability</span>
+          <h3 class="emb-hero-title">PCB Design &<br>Hardware Prototyping</h3>
+          <p class="emb-hero-desc">End-to-end circuit board design from schematic capture to fabrication-ready Gerbers. We build boards that work in the real world — thermally stable, EMI-clean, and DFM-ready.</p>
+          <div class="emb-hero-pills">
+            <span class="emb-pill">KiCad</span>
+            <span class="emb-pill">Altium</span>
+            <span class="emb-pill">Eagle</span>
+            <span class="emb-pill">Gerber</span>
+            <span class="emb-pill">SPICE Sim</span>
+            <span class="emb-pill">4-Layer HDI</span>
+          </div>
+        </div>
+        <div class="emb-hero-visual">
+          <div class="emb-pcb-mock">
+            <div class="emb-pcb-row">
+              <div class="emb-led green"></div>
+              <span class="emb-pcb-line">MCU CORE — STM32F407</span>
+              <span class="emb-pcb-val">ACTIVE</span>
+            </div>
+            <div class="emb-pcb-row">
+              <div class="emb-led blue"></div>
+              <span class="emb-pcb-line">WIRELESS — ESP32-C6</span>
+              <span class="emb-pcb-val">802.11ax</span>
+            </div>
+            <div class="emb-pcb-row">
+              <div class="emb-led purple"></div>
+              <span class="emb-pcb-line">POWER — 3.3V BUCK</span>
+              <span class="emb-pcb-val">94% EFF</span>
+            </div>
+            <div class="emb-pcb-row">
+              <div class="emb-led amber"></div>
+              <span class="emb-pcb-line">SENSORS — I²C BUS</span>
+              <span class="emb-pcb-val">400kHz</span>
+            </div>
+            <div class="emb-pcb-row">
+              <div class="emb-led green"></div>
+              <span class="emb-pcb-line">FLASH — 4MB SPI</span>
+              <span class="emb-pcb-val">80MHz</span>
+            </div>
+            <div class="emb-pcb-row">
+              <div class="emb-led blue"></div>
+              <span class="emb-pcb-line">DFM CHECK</span>
+              <span class="emb-pcb-val">PASS ✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="emb-sub-grid">
+      <div class="emb-sub-card reveal d1">
+        <div class="emb-sub-num">E-01 ——</div>
+        <div class="emb-sub-icon">⚙️</div>
+        <div class="emb-sub-name">Firmware Development</div>
+        <p class="emb-sub-desc">Bare-metal and RTOS-based firmware engineered for reliability, low latency, and minimal footprint across ARM, AVR, and RISC-V targets.</p>
+        <div class="emb-sub-pills">
+          <span class="emb-sub-pill">C/C++</span>
+          <span class="emb-sub-pill">FreeRTOS</span>
+          <span class="emb-sub-pill">Zephyr</span>
+          <span class="emb-sub-pill">HAL/LL</span>
+        </div>
+      </div>
+      <div class="emb-sub-card reveal d2">
+        <div class="emb-sub-num">E-02 ——</div>
+        <div class="emb-sub-icon">🌐</div>
+        <div class="emb-sub-name">IoT Systems</div>
+        <p class="emb-sub-desc">Connected device ecosystems with secure cloud integration, OTA updates, and real-time telemetry dashboards — from sensor to server.</p>
+        <div class="emb-sub-pills">
+          <span class="emb-sub-pill">MQTT</span>
+          <span class="emb-sub-pill">AWS IoT</span>
+          <span class="emb-sub-pill">BLE 5.0</span>
+          <span class="emb-sub-pill">LoRaWAN</span>
+        </div>
+      </div>
+      <div class="emb-sub-card reveal d3">
+        <div class="emb-sub-num">E-03 ——</div>
+        <div class="emb-sub-icon">🔬</div>
+        <div class="emb-sub-name">Signal Processing & DSP</div>
+        <p class="emb-sub-desc">Optimized DSP pipelines for audio, sensor fusion, motor control, and industrial measurement applications with real-time performance guarantees.</p>
+        <div class="emb-sub-pills">
+          <span class="emb-sub-pill">CMSIS-DSP</span>
+          <span class="emb-sub-pill">FFT</span>
+          <span class="emb-sub-pill">PID Control</span>
+          <span class="emb-sub-pill">ADC/DAC</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK SHOWCASE -->
+<section id="work">
+  <div class="work-grid-bg"></div>
+  <div class="section-wrap">
+    <div class="work-header reveal">
+      <span class="section-tag">// selected projects</span>
+      <h2 class="section-title">Work That <span class="accent">Speaks</span></h2>
+      <p class="section-desc">A snapshot of the products, platforms, and systems we've shipped for clients worldwide.</p>
+    </div>
+
+    <div class="work-filter reveal">
+      <button class="wf-btn active" onclick="filterWork(this,'all')">ALL</button>
+      <button class="wf-btn" onclick="filterWork(this,'web')">WEB</button>
+      <button class="wf-btn" onclick="filterWork(this,'mobile')">MOBILE</button>
+      <button class="wf-btn" onclick="filterWork(this,'embedded')">EMBEDDED</button>
+      <button class="wf-btn" onclick="filterWork(this,'iot')">IoT</button>
+      <button class="wf-btn" onclick="filterWork(this,'erp')">ERP</button>
+    </div>
+
+    <div class="work-grid" id="workGrid">
+
+      <!-- Featured: RetailNova ERP -->
+      <div class="work-card work-card-featured reveal d1" data-cat="erp">
+        <div class="work-thumb">
+          <div class="work-thumb-bg wt-1"></div>
+          <div class="work-thumb-ui">
+            <div class="wtu-bar"><div class="wtu-dot"></div><div class="wtu-dot"></div><div class="wtu-dot"></div></div>
+            <div class="wtu-line wtu-l1"></div>
+            <div class="wtu-line wtu-l2"></div>
+            <div class="wtu-line wtu-l3"></div>
+            <div class="wtu-row"><div class="wtu-box"></div><div class="wtu-box2"></div><div class="wtu-box"></div></div>
+          </div>
+          <span class="work-tag-badge">ERP · FEATURED</span>
+          <div class="work-hover-overlay">
+            <a href="portfolio.html" class="who-link">VIEW CASE STUDY <span>→</span></a>
+          </div>
+        </div>
+        <div class="work-info">
+          <div class="work-info-top">
+            <span class="work-category">ERP SYSTEM</span>
+            <span class="work-year">2025</span>
+          </div>
+          <div class="work-title">RetailNova Operations Hub</div>
+          <p class="work-desc">End-to-end ERP unifying inventory, POS, HR, and finance for a 120-store retail chain. Cut manual work by 60% in the first quarter.</p>
+          <div class="work-pills">
+            <span class="work-pill">Next.js</span><span class="work-pill">Node.js</span>
+            <span class="work-pill">PostgreSQL</span><span class="work-pill">Redis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FitTrackr Mobile -->
+      <div class="work-card reveal d2" data-cat="mobile">
+        <div class="work-thumb">
+          <div class="work-thumb-bg wt-2"></div>
+          <div class="work-thumb-ui" style="width:55%;">
+            <div class="wtu-bar"><div class="wtu-dot"></div><div class="wtu-dot"></div><div class="wtu-dot"></div></div>
+            <div class="wtu-line wtu-l2"></div>
+            <div class="wtu-line wtu-l3"></div>
+            <div class="wtu-row"><div class="wtu-box"></div><div class="wtu-box"></div></div>
+          </div>
+          <span class="work-tag-badge">MOBILE</span>
+          <div class="work-hover-overlay">
+            <a href="portfolio.html" class="who-link">VIEW CASE STUDY <span>→</span></a>
+          </div>
+        </div>
+        <div class="work-info">
+          <div class="work-info-top">
+            <span class="work-category">MOBILE APP</span>
+            <span class="work-year">2024</span>
+          </div>
+          <div class="work-title">FitTrackr</div>
+          <p class="work-desc">Cross-platform fitness app. 10K users in launch month, 4.9★ rating.</p>
+          <div class="work-pills">
+            <span class="work-pill">Flutter</span><span class="work-pill">Firebase</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IoT Smart Meter -->
+      <div class="work-card reveal d1" data-cat="iot embedded">
+        <div class="work-thumb">
+          <div class="work-thumb-bg wt-3"></div>
+          <div class="work-thumb-ui">
+            <div class="wtu-bar"><div class="wtu-dot"></div><div class="wtu-dot"></div><div class="wtu-dot"></div></div>
+            <div class="wtu-line" style="background:rgba(39,201,63,0.5);width:70%;height:6px;border-radius:4px;margin-bottom:8px;"></div>
+            <div class="wtu-line wtu-l3"></div>
+            <div class="wtu-row"><div class="wtu-box" style="background:rgba(39,201,63,0.3)"></div><div class="wtu-box2"></div></div>
+          </div>
+          <span class="work-tag-badge">IoT · EMBEDDED</span>
+          <div class="work-hover-overlay">
+            <a href="portfolio.html" class="who-link">VIEW CASE STUDY <span>→</span></a>
+          </div>
+        </div>
+        <div class="work-info">
+          <div class="work-info-top">
+            <span class="work-category">IoT SYSTEM</span>
+            <span class="work-year">2025</span>
+          </div>
+          <div class="work-title">GridSense Smart Meters</div>
+          <p class="work-desc">LoRaWAN energy monitoring nodes with custom PCB + firmware + cloud dashboard for 5,000 industrial units.</p>
+          <div class="work-pills">
+            <span class="work-pill">STM32</span><span class="work-pill">LoRaWAN</span><span class="work-pill">AWS IoT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LogiStream Automation -->
+      <div class="work-card reveal d2" data-cat="web">
+        <div class="work-thumb">
+          <div class="work-thumb-bg wt-4"></div>
+          <div class="work-thumb-ui">
+            <div class="wtu-bar"><div class="wtu-dot"></div><div class="wtu-dot"></div><div class="wtu-dot"></div></div>
+            <div class="wtu-line wtu-l1"></div>
+            <div class="wtu-line" style="background:rgba(255,179,71,0.5);width:45%;height:6px;border-radius:4px;margin-bottom:8px;"></div>
+            <div class="wtu-row"><div class="wtu-box" style="background:rgba(255,179,71,0.3)"></div><div class="wtu-box2"></div></div>
+          </div>
+          <span class="work-tag-badge">AUTOMATION</span>
+          <div class="work-hover-overlay">
+            <a href="portfolio.html" class="who-link">VIEW CASE STUDY <span>→</span></a>
+          </div>
+        </div>
+        <div class="work-info">
+          <div class="work-info-top">
+            <span class="work-category">WEB · AUTOMATION</span>
+            <span class="work-year">2024</span>
+          </div>
+          <div class="work-title">LogiStream Bot Suite</div>
+          <p class="work-desc">RPA bots automating freight invoicing & dispatch. Saved 40+ hours/week from day one.</p>
+          <div class="work-pills">
+            <span class="work-pill">Python</span><span class="work-pill">RPA</span><span class="work-pill">FastAPI</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PCB / Embedded -->
+      <div class="work-card reveal d3" data-cat="embedded">
+        <div class="work-thumb">
+          <div class="work-thumb-bg wt-5"></div>
+          <div class="work-thumb-ui">
+            <div class="wtu-bar"><div class="wtu-dot"></div><div class="wtu-dot"></div><div class="wtu-dot"></div></div>
+            <div class="wtu-line" style="background:rgba(163,102,255,0.6);width:60%;height:6px;border-radius:4px;margin-bottom:8px;"></div>
+            <div class="wtu-line wtu-l3"></div>
+            <div class="wtu-row"><div class="wtu-box"></div><div class="wtu-box"></div><div class="wtu-box2"></div></div>
+          </div>
+          <span class="work-tag-badge">PCB · FIRMWARE</span>
+          <div class="work-hover-overlay">
+            <a href="portfolio.html" class="who-link">VIEW CASE STUDY <span>→</span></a>
+          </div>
+        </div>
+        <div class="work-info">
+          <div class="work-info-top">
+            <span class="work-category">EMBEDDED</span>
+            <span class="work-year">2025</span>
+          </div>
+          <div class="work-title">NeuroSense Motor Driver</div>
+          <p class="work-desc">4-layer PCB + FreeRTOS firmware for a precision brushless motor controller used in medical robotics.</p>
+          <div class="work-pills">
+            <span class="work-pill">KiCad</span><span class="work-pill">STM32</span><span class="work-pill">FreeRTOS</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="work-footer reveal">
+      <div class="work-count-line">SHOWING 5 OF 50+ PROJECTS</div>
+      <a href="portfolio.html" class="btn-portfolio">
+        <span>View Full Portfolio</span>
+        <span class="btn-portfolio-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-wrap">
+    <div class="process-wrap">
+      <div class="reveal-l">
+        <span class="section-tag">// how we work</span>
+        <h2 class="section-title">From Idea<br>to <span class="accent">Launch</span></h2>
+        <p class="section-desc" style="margin-bottom:48px;">A disciplined workflow that turns your vision into production-grade reality — on time, every time.</p>
+        <div class="process-steps">
+          <div class="p-step">
+            <div class="p-num-wrap"><div class="p-num">01</div></div>
+            <div class="p-body"><h3>Discovery & Strategy</h3><p>We deep-dive into your goals, requirements, and competitive landscape to build a crystal-clear roadmap.</p></div>
+          </div>
+          <div class="p-step">
+            <div class="p-num-wrap"><div class="p-num">02</div></div>
+            <div class="p-body"><h3>Design & Prototype</h3><p>From wireframes to high-fidelity prototypes — every interaction validated before a single line of code.</p></div>
+          </div>
+          <div class="p-step">
+            <div class="p-num-wrap"><div class="p-num">03</div></div>
+            <div class="p-body"><h3>Agile Development</h3><p>Iterative sprints, regular demos, clean code, test-driven from day one. You're always in control.</p></div>
+          </div>
+          <div class="p-step">
+            <div class="p-num-wrap"><div class="p-num">04</div></div>
+            <div class="p-body"><h3>Launch & Scale</h3><p>Seamless deployment, performance monitoring, and ongoing support as your product grows.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="process-right reveal-r">
+        <div class="process-mockup">
+          <div class="pm-topbar">
+            <div class="pm-dot"></div><div class="pm-dot"></div><div class="pm-dot"></div>
+            <div class="pm-title-bar">OXELYON · PROJECT DASHBOARD</div>
+          </div>
+          <div class="pm-body">
+            <div class="pm-section-title">SPRINT OVERVIEW</div>
+            <div class="pm-stat-row">
+              <div class="pm-stat-box">
+                <div class="pm-stat-val purple">24</div>
+                <div class="pm-stat-lbl">Tasks Done</div>
+              </div>
+              <div class="pm-stat-box">
+                <div class="pm-stat-val">6</div>
+                <div class="pm-stat-lbl">In Progress</div>
+              </div>
+              <div class="pm-stat-box">
+                <div class="pm-stat-val">2</div>
+                <div class="pm-stat-lbl">Pending</div>
+              </div>
+            </div>
+            <div class="pm-section-title" style="margin-top:8px;">MILESTONES</div>
+            <div class="pm-progress-row">
+              <div class="pm-prog-label"><span>UI Design</span><span>100%</span></div>
+              <div class="pm-prog-bar"><div class="pm-prog-fill" style="width:100%"></div></div>
+            </div>
+            <div class="pm-progress-row">
+              <div class="pm-prog-label"><span>Backend API</span><span>85%</span></div>
+              <div class="pm-prog-bar"><div class="pm-prog-fill" style="width:85%"></div></div>
+            </div>
+            <div class="pm-progress-row">
+              <div class="pm-prog-label"><span>QA Testing</span><span>60%</span></div>
+              <div class="pm-prog-bar"><div class="pm-prog-fill" style="width:60%"></div></div>
+            </div>
+            <div class="pm-progress-row">
+              <div class="pm-prog-label"><span>Deployment</span><span>20%</span></div>
+              <div class="pm-prog-bar"><div class="pm-prog-fill" style="width:20%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="pm-badge">
+          <div>98%</div>
+          <div style="font-size:9px;opacity:0.8;letter-spacing:1px;margin-top:2px;">SATISFACTION</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section id="tech">
+  <div class="section-wrap" style="padding-bottom:40px;">
+    <div class="tech-header reveal">
+      <span class="section-tag">// our arsenal</span>
+      <h2 class="section-title">Built With the <span class="accent">Best</span></h2>
+      <p class="section-desc">Cutting-edge technologies chosen for performance, reliability, and future-proofing.</p>
+    </div>
+  </div>
+  <div style="overflow:hidden; padding-bottom:80px;">
+    <div class="marquee-row a1">
+      <div class="tech-chip"><span class="tc-icon">⚛️</span>React.js</div>
+      <div class="tech-chip"><span class="tc-icon">▲</span>Next.js</div>
+      <div class="tech-chip"><span class="tc-icon">🟢</span>Node.js</div>
+      <div class="tech-chip"><span class="tc-icon">🐍</span>Python</div>
+      <div class="tech-chip"><span class="tc-icon">💙</span>Flutter</div>
+      <div class="tech-chip"><span class="tc-icon">📘</span>TypeScript</div>
+      <div class="tech-chip"><span class="tc-icon">🐘</span>PostgreSQL</div>
+      <div class="tech-chip"><span class="tc-icon">🍃</span>MongoDB</div>
+      <div class="tech-chip"><span class="tc-icon">⚡</span>Redis</div>
+      <div class="tech-chip"><span class="tc-icon">🎯</span>GraphQL</div>
+      <div class="tech-chip"><span class="tc-icon">⚛️</span>React.js</div>
+      <div class="tech-chip"><span class="tc-icon">▲</span>Next.js</div>
+      <div class="tech-chip"><span class="tc-icon">🟢</span>Node.js</div>
+      <div class="tech-chip"><span class="tc-icon">🐍</span>Python</div>
+      <div class="tech-chip"><span class="tc-icon">💙</span>Flutter</div>
+      <div class="tech-chip"><span class="tc-icon">📘</span>TypeScript</div>
+      <div class="tech-chip"><span class="tc-icon">🐘</span>PostgreSQL</div>
+      <div class="tech-chip"><span class="tc-icon">🍃</span>MongoDB</div>
+      <div class="tech-chip"><span class="tc-icon">⚡</span>Redis</div>
+      <div class="tech-chip"><span class="tc-icon">🎯</span>GraphQL</div>
+    </div>
+    <div class="marquee-row a2">
+      <div class="tech-chip"><span class="tc-icon">☁️</span>AWS</div>
+      <div class="tech-chip"><span class="tc-icon">🔷</span>Azure</div>
+      <div class="tech-chip"><span class="tc-icon">🐳</span>Docker</div>
+      <div class="tech-chip"><span class="tc-icon">☸️</span>Kubernetes</div>
+      <div class="tech-chip"><span class="tc-icon">⚡</span>FastAPI</div>
+      <div class="tech-chip"><span class="tc-icon">🖥️</span>Electron</div>
+      <div class="tech-chip"><span class="tc-icon">🎨</span>Tailwind</div>
+      <div class="tech-chip"><span class="tc-icon">🟣</span>Supabase</div>
+      <div class="tech-chip"><span class="tc-icon">🤖</span>OpenAI API</div>
+      <div class="tech-chip"><span class="tc-icon">🦀</span>Tauri</div>
+      <div class="tech-chip"><span class="tc-icon">☁️</span>AWS</div>
+      <div class="tech-chip"><span class="tc-icon">🔷</span>Azure</div>
+      <div class="tech-chip"><span class="tc-icon">🐳</span>Docker</div>
+      <div class="tech-chip"><span class="tc-icon">☸️</span>Kubernetes</div>
+      <div class="tech-chip"><span class="tc-icon">⚡</span>FastAPI</div>
+      <div class="tech-chip"><span class="tc-icon">🖥️</span>Electron</div>
+      <div class="tech-chip"><span class="tc-icon">🎨</span>Tailwind</div>
+      <div class="tech-chip"><span class="tc-icon">🟣</span>Supabase</div>
+      <div class="tech-chip"><span class="tc-icon">🤖</span>OpenAI API</div>
+      <div class="tech-chip"><span class="tc-icon">🦀</span>Tauri</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-wrap">
+    <div class="why-layout">
+      <div class="reveal-l">
+        <span class="section-tag">// why oxelyon</span>
+        <h2 class="section-title">More Than a<br><span class="accent">Dev Agency</span></h2>
+        <p class="section-desc">We become your long-term technology partner, obsessed with your growth and the quality of every pixel.</p>
+        <div class="why-big">
+          <div class="why-big-num">94%</div>
+          <div class="why-big-label">Client Retention Rate</div>
+          <div class="why-big-sub">Most clients return for their next project</div>
+        </div>
+      </div>
+      <div class="why-cards reveal-r">
+        <div class="why-card">
+          <span class="wc-icon">⚡</span>
+          <div class="wc-title">Rapid Delivery</div>
+          <p class="wc-text">Agile sprints and lean workflows mean faster time-to-market without sacrificing quality.</p>
+        </div>
+        <div class="why-card">
+          <span class="wc-icon">🔒</span>
+          <div class="wc-title">Security First</div>
+          <p class="wc-text">Enterprise-grade security, compliance, and data protection built in from day one.</p>
+        </div>
+        <div class="why-card">
+          <span class="wc-icon">📐</span>
+          <div class="wc-title">Clean Architecture</div>
+          <p class="wc-text">Modular, scalable codebases that are easy to maintain, extend, and hand off.</p>
+        </div>
+        <div class="why-card">
+          <span class="wc-icon">🤝</span>
+          <div class="wc-title">Transparent</div>
+          <p class="wc-text">Real-time dashboards, weekly calls, and zero hidden surprises. You're always in the loop.</p>
+        </div>
+        <div class="why-card">
+          <span class="wc-icon">🧠</span>
+          <div class="wc-title">AI-Powered</div>
+          <p class="wc-text">We integrate cutting-edge AI capabilities into every product that can benefit from them.</p>
+        </div>
+        <div class="why-card">
+          <span class="wc-icon">📈</span>
+          <div class="wc-title">Built to Scale</div>
+          <p class="wc-text">Architecture designed for 10x growth from day one — we think long-term, always.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-wrap">
+    <div class="test-head reveal">
+      <span class="section-tag">// client voices</span>
+      <h2 class="section-title">What Our <span class="accent">Clients</span> Say</h2>
+      <p class="section-desc">Real results from real partnerships.</p>
+    </div>
+    <div class="test-grid">
+      <div class="test-card reveal d1">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-quote">"Oxelyon transformed our entire operations with a custom ERP that actually fits how we work. The team is responsive, skilled, and deeply invested in our success."</p>
+        <div class="test-author">
+          <div class="test-av">AK</div>
+          <div>
+            <div class="test-name">Arjun Kapoor</div>
+            <div class="test-role">CTO · RetailNova</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal d2">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-quote">"The automation bots they built saved us 40+ hours a week. ROI was visible within the first month. An absolute game-changer for our operations."</p>
+        <div class="test-author">
+          <div class="test-av">SM</div>
+          <div>
+            <div class="test-name">Sara Mitchell</div>
+            <div class="test-role">COO · LogiStream</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal d3">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-quote">"From design to launch in 6 weeks. Our mobile app hit 10k users in the first month. Oxelyon's execution is flawless and their design sensibility is world-class."</p>
+        <div class="test-author">
+          <div class="test-av">RN</div>
+          <div>
+            <div class="test-name">Riya Nair</div>
+            <div class="test-role">Founder · FitTrackr</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-grid"></div>
+  <div class="section-wrap">
+    <div class="cta-inner reveal">
+      <span class="section-tag cta-tag">// let's build together</span>
+      <h2 class="cta-title">Ready to <span class="accent">Elevate</span><br>Your Vision?</h2>
+      <p class="cta-sub">Tell us about your project and we'll respond with a tailored proposal within 24 hours.</p>
+      <div class="cta-btns">
+        <button class="btn-white" onclick="openModal()">Start a Project</button>
+        <button class="btn-outline-white" onclick="openModal()">Schedule a Call →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="nav-logo-wrap">
+          <div class="nav-logo-text">OXEL<span>Y</span>ON</div>
+        </div>
+        <p class="footer-brand-desc">Engineering transformative digital products that help businesses grow, automate, and lead their markets.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-col-links">
+          <li><a href="#services">Web Applications</a></li>
+          <li><a href="#services">Mobile Apps</a></li>
+          <li><a href="#embedded">PCB Design</a></li>
+          <li><a href="#embedded">Firmware Dev</a></li>
+          <li><a href="#embedded">IoT Systems</a></li>
+          <li><a href="#services">ERP Systems</a></li>
+          <li><a href="#services">Cloud & DevOps</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-col-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Process</a></li>
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-col-links">
+          <li><a href="mailto:info@oxelyon.com">info@oxelyon.com</a></li>
+          <li><a href="tel:+917994773657">+91 7994773657</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">GitHub</a></li>
+          <li><a href="#">Twitter / X</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 OXELYON TECHNOLOGIES · ALL RIGHTS RESERVED</div>
+      <div class="footer-socials">
+        <a class="soc-btn" href="#">in</a>
+        <a class="soc-btn" href="#">GH</a>
+        <a class="soc-btn" href="#">X</a>
+        <a class="soc-btn" href="#">YT</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="contactModal" onclick="handleOverlayClick(event)">
+  <div class="modal-card">
+    <div class="modal-top">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <span class="modal-top-label">// let's build together</span>
+      <div class="modal-title">Start Your Project</div>
+      <p class="modal-subtitle">Tell us what you're building. We'll respond with a tailored proposal within 24 hours.</p>
+    </div>
+    <div class="modal-body">
+      <div class="modal-contact-row">
+        <div class="modal-contact-chip">
+          <span class="mcc-icon">📧</span>
+          <div>
+            <div class="mcc-label">EMAIL US</div>
+            <div class="mcc-val">info@oxelyon.com</div>
+          </div>
+        </div>
+        <div class="modal-contact-chip">
+          <span class="mcc-icon">📞</span>
+          <div>
+            <div class="mcc-label">CALL US</div>
+            <div class="mcc-val">+91 7994773657</div>
+          </div>
+        </div>
+        <div class="modal-contact-chip">
+          <span class="mcc-icon">⏱️</span>
+          <div>
+            <div class="mcc-label">RESPONSE TIME</div>
+            <div class="mcc-val">Within 24 hrs</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="contactForm">
+        <div class="modal-form-row">
+          <div class="modal-form-group">
+            <label>YOUR NAME</label>
+            <input type="text" placeholder="Arjun Kapoor" id="mName" />
+          </div>
+          <div class="modal-form-group">
+            <label>EMAIL ADDRESS</label>
+            <input type="email" placeholder="arjun@company.com" id="mEmail" />
+          </div>
+        </div>
+        <div class="modal-form-row">
+          <div class="modal-form-group">
+            <label>COMPANY / STARTUP</label>
+            <input type="text" placeholder="RetailNova Inc." id="mCompany" />
+          </div>
+          <div class="modal-form-group">
+            <label>SERVICE NEEDED</label>
+            <select id="mService">
+              <option value="">Select a service…</option>
+              <option>Web Application</option>
+              <option>Mobile App</option>
+              <option>Desktop Software</option>
+              <option>PCB Design</option>
+              <option>Firmware Development</option>
+              <option>IoT Systems</option>
+              <option>Signal Processing / DSP</option>
+              <option>Automation Bots</option>
+              <option>ERP Software</option>
+              <option>Cloud & DevOps</option>
+              <option>Other / Not Sure</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-form-group">
+          <label>PROJECT BUDGET</label>
+          <select id="mBudget">
+            <option value="">Select budget range…</option>
+            <option>Under ₹1 Lakh</option>
+            <option>₹1L – ₹5L</option>
+            <option>₹5L – ₹20L</option>
+            <option>₹20L – ₹50L</option>
+            <option>₹50L+</option>
+            <option>Let's discuss</option>
+          </select>
+        </div>
+        <div class="modal-form-group">
+          <label>TELL US ABOUT YOUR PROJECT</label>
+          <textarea placeholder="Describe your idea, goals, timeline, or any questions you have…" id="mMessage"></textarea>
+        </div>
+        <button class="modal-submit" onclick="submitForm()"><span>Send Project Brief →</span></button>
+        <p class="modal-note">🔒 Your information is kept private and never shared. No spam, ever.</p>
+      </div>
+
+      <div class="modal-success" id="modalSuccess">
+        <span class="modal-success-icon">🚀</span>
+        <div class="modal-success-title">Brief Received!</div>
+        <p class="modal-success-text">Thanks for reaching out. Our team will review your project and respond with a tailored proposal within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+emailjs.init('SzdbWBSDC0uxHKJ88');
+// Theme toggle
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme', isDark?'light':'dark');
+  localStorage.setItem('oxelyon-theme', isDark?'light':'dark');
+}
+(function(){
+  const saved=localStorage.getItem('oxelyon-theme');
+  if(saved) document.documentElement.setAttribute('data-theme',saved);
+})();
+
+// Cursor
+const cur = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+(function anim(){
+  tx+=(mx-tx)*0.14; ty+=(my-ty)*0.14;
+  trail.style.left=tx+'px'; trail.style.top=ty+'px';
+  requestAnimationFrame(anim);
+})();
+
+// Scroll progress + nav
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY, dh=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('progress').style.width=(s/dh*100)+'%';
+  document.getElementById('nav').classList.toggle('scrolled',s>60);
+});
+
+// Counter
+function counter(el,target,dur=1800){
+  let start=null;
+  function step(ts){
+    if(!start) start=ts;
+    const p=Math.min((ts-start)/dur,1);
+    el.textContent=Math.floor(p*target);
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+counter(document.getElementById('c1'),150);
+counter(document.getElementById('c2'),98);
+counter(document.getElementById('c3'),12);
+
+// Reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('up');});
+},{threshold:0.12});
+document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el=>obs.observe(el));
+
+// Work filter
+function filterWork(btn, cat) {
+  document.querySelectorAll('.wf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.work-card').forEach(card=>{
+    const c = card.dataset.cat || '';
+    if(cat==='all' || c.includes(cat)){
+      card.style.display=''; card.style.opacity='1';
+    } else {
+      card.style.opacity='0.2'; card.style.pointerEvents='none';
+      setTimeout(()=>{ if(!card.dataset.cat.includes(cat) && cat!=='all') card.style.display=''; },300);
+    }
+  });
+  // reset pointer events for visible
+  document.querySelectorAll('.work-card').forEach(card=>{
+    card.style.pointerEvents = '';
+  });
+}
+
+function openModal(){
+  document.getElementById('contactModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('contactModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleOverlayClick(e){
+  if(e.target===document.getElementById('contactModal')) closeModal();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
+function submitForm(){
+  const name=document.getElementById('mName').value.trim();
+  const email=document.getElementById('mEmail').value.trim();
+  const company=document.getElementById('mCompany').value.trim();
+  const service=document.getElementById('mService').value;
+  const budget=document.getElementById('mBudget').value;
+  const message=document.getElementById('mMessage').value.trim();
+  if(!name||!email){
+    alert('Please fill in your name and email to continue.');
+    return;
+  }
+  const btn=document.querySelector('.modal-submit');
+  btn.disabled=true;
+  btn.querySelector('span').textContent='Sending…';
+  const templateParams={
+    from_name: name,
+    from_email: email,
+    company: company||'—',
+    service: service||'—',
+    budget: budget||'—',
+    message: message||'—'
+  };
+  emailjs.send('service_2no5kfa','template_bxosk11',templateParams)
+    .then(()=>{
+      document.getElementById('contactForm').style.display='none';
+      document.getElementById('modalSuccess').classList.add('show');
+      btn.disabled=false;
+      btn.querySelector('span').textContent='Send Project Brief →';
+      // Clear form
+      ['mName','mEmail','mCompany','mMessage'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('mService').selectedIndex=0;
+      document.getElementById('mBudget').selectedIndex=0;
+      setTimeout(()=>{
+        closeModal();
+        setTimeout(()=>{
+          document.getElementById('contactForm').style.display='block';
+          document.getElementById('modalSuccess').classList.remove('show');
+        },400);
+      },3200);
+    })
+    .catch(err=>{
+      console.error('EmailJS error:',err);
+      alert('Something went wrong. Please try again or email us directly at info@oxelyon.com');
+      btn.disabled=false;
+      btn.querySelector('span').textContent='Send Project Brief →';
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oxelyon — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #7B2FFF; --purple2: #5B0FDF; --purple-light: #A366FF;
+  --purple-pale: #F0E8FF; --purple-pale2: #E8D8FF;
+  --ink: #1A1A2E; --ink2: #2E2E48; --mid: #6B6B88; --muted: #9B9BB8;
+  --border: #E2DFF0; --bg: #FAFAFA; --bg2: #F4F2FF; --white: #FFFFFF;
+  --nav-bg: rgba(250,250,250,0.92);
+}
+[data-theme="dark"] {
+  --ink: #E8E8FF; --ink2: #C8C8EE; --mid: #9B9BB8; --muted: #6B6B88;
+  --border: #2A2A40; --border2: #3A3A58;
+  --bg: #0E0E1A; --bg2: #12121F; --white: #181828;
+  --purple-pale: rgba(123,47,255,0.15); --purple-pale2: rgba(123,47,255,0.25);
+  --nav-bg: rgba(14,14,26,0.95);
+}
+.ox-x-fill { fill: #111111; }
+[data-theme="dark"] .ox-x-fill { fill: #CCCCEE; }
+.theme-toggle { width:40px; height:40px; border-radius:10px; background:var(--bg2); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:none; transition:all 0.3s; font-size:17px; flex-shrink:0; }
+.theme-toggle:hover { border-color:var(--purple); background:var(--purple-pale); }
+.theme-toggle .icon-sun { display:none; }
+.theme-toggle .icon-moon { display:block; }
+[data-theme="dark"] .theme-toggle .icon-sun { display:block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display:none; }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--ink); font-family:'DM Sans',sans-serif; overflow-x:hidden; cursor:none; }
+
+/* Cursor */
+#cursor { position:fixed; width:10px; height:10px; background:var(--purple); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width 0.2s,height 0.2s; mix-blend-mode:multiply; }
+#cursor-trail { position:fixed; width:32px; height:32px; border:1.5px solid var(--purple-light); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:transform 0.12s ease; opacity:0.6; }
+#progress { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--purple2),var(--purple-light)); z-index:1000; width:0%; transition:width 0.1s; }
+
+/* Nav */
+nav { position:fixed; top:0; width:100%; z-index:800; padding:0 64px; height:72px; display:flex; align-items:center; justify-content:space-between; background:var(--nav-bg); backdrop-filter:blur(20px); border-bottom:1px solid transparent; transition:all 0.3s; }
+nav.scrolled { border-bottom-color:var(--border); box-shadow:0 4px 32px rgba(123,47,255,0.06); }
+.nav-logo-wrap { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.nav-logo-mark { width:36px; height:36px; background:linear-gradient(135deg,var(--purple),var(--purple2)); clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:12px; font-weight:900; color:#fff; }
+.nav-logo-text { font-family:'Orbitron',monospace; font-weight:900; font-size:20px; letter-spacing:3px; color:var(--ink); }
+.nav-logo-text span { color:var(--purple); }
+.nav-back { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--mid); font-size:13px; font-weight:500; letter-spacing:0.5px; transition:color 0.2s; cursor:none; }
+.nav-back:hover { color:var(--purple); }
+.nav-back-arrow { transition:transform 0.25s; }
+.nav-back:hover .nav-back-arrow { transform:translateX(-3px); }
+.nav-cta { background:var(--purple); border:none; color:#fff; padding:10px 28px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.5px; cursor:none; transition:all 0.3s; }
+.nav-cta:hover { box-shadow:0 8px 24px rgba(123,47,255,0.35); transform:translateY(-1px); }
+
+/* Hero */
+.port-hero {
+  min-height:420px; padding-top:72px; background:var(--ink); position:relative; overflow:hidden;
+  display:flex; align-items:center;
+}
+.port-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 60% 100%,rgba(123,47,255,0.2),transparent); }
+.port-hero-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(123,47,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(123,47,255,0.05) 1px,transparent 1px); background-size:48px 48px; }
+.port-hero-inner { max-width:1200px; margin:0 auto; padding:80px 64px; position:relative; z-index:1; width:100%; }
+.port-hero-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:4px; color:var(--purple-light); margin-bottom:16px; display:block; }
+.port-hero-title { font-family:'Orbitron',monospace; font-size:clamp(36px,5vw,64px); font-weight:900; color:#fff; line-height:1.05; margin-bottom:16px; }
+.port-hero-title .accent { color:var(--purple-light); }
+.port-hero-sub { font-size:17px; color:rgba(255,255,255,0.45); line-height:1.8; max-width:520px; margin-bottom:40px; }
+.port-hero-stats { display:flex; gap:48px; }
+.phs-num { font-family:'Orbitron',monospace; font-size:28px; font-weight:900; color:#fff; }
+.phs-num span { color:var(--purple-light); }
+.phs-label { font-size:12px; color:rgba(255,255,255,0.4); margin-top:4px; letter-spacing:0.5px; }
+
+/* Filter Bar */
+.filter-bar { background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:72px; z-index:500; }
+.filter-bar-inner { max-width:1200px; margin:0 auto; padding:0 64px; display:flex; align-items:center; gap:8px; overflow-x:auto; height:60px; }
+.filter-bar-inner::-webkit-scrollbar { display:none; }
+.fb-btn { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; padding:7px 18px; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:none; transition:all 0.25s; white-space:nowrap; flex-shrink:0; }
+.fb-btn:hover, .fb-btn.active { background:var(--purple); border-color:var(--purple); color:#fff; }
+.fb-count { margin-left:auto; font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; flex-shrink:0; }
+
+/* Main Grid */
+.port-main { max-width:1200px; margin:0 auto; padding:64px; }
+.port-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+
+/* Project Card */
+.proj-card {
+  background:var(--white); border:1px solid var(--border); border-radius:20px;
+  overflow:hidden; transition:all 0.4s; cursor:none;
+}
+.proj-card:hover { border-color:var(--purple-pale2); transform:translateY(-8px); box-shadow:0 24px 60px rgba(123,47,255,0.1); }
+.proj-card.span2 { grid-column:span 2; }
+
+.proj-thumb { height:220px; position:relative; overflow:hidden; }
+.proj-card.span2 .proj-thumb { height:260px; }
+.proj-thumb-bg { position:absolute; inset:0; transition:transform 0.5s ease; }
+.proj-card:hover .proj-thumb-bg { transform:scale(1.06); }
+
+/* Thumb color schemes */
+.pt-purple { background:linear-gradient(135deg,#1a0533,#3d0f7a,#1a1a3e); }
+.pt-blue { background:linear-gradient(135deg,#0a1628,#0f3460,#16213e); }
+.pt-green { background:linear-gradient(135deg,#0d2a1f,#0a4a2f,#112920); }
+.pt-amber { background:linear-gradient(135deg,#1a1205,#4a2c0a,#2a1a08); }
+.pt-rose { background:linear-gradient(135deg,#200a1a,#5a0f3d,#200a1a); }
+.pt-teal { background:linear-gradient(135deg,#051a1a,#0f4a4a,#051a1a); }
+.pt-navy { background:linear-gradient(135deg,#050a1f,#0f1f5a,#050a20); }
+.pt-crimson { background:linear-gradient(135deg,#1f050a,#5a0f1f,#1f050a); }
+
+.proj-thumb-ui { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+.ptu-window {
+  width:80%; background:rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px; padding:16px; backdrop-filter:blur(8px);
+}
+.ptu-bar { display:flex; gap:5px; margin-bottom:12px; }
+.ptu-dot { width:7px; height:7px; border-radius:50%; }
+.ptu-dot:nth-child(1){background:#FF5F56;} .ptu-dot:nth-child(2){background:#FFBD2E;} .ptu-dot:nth-child(3){background:#27C93F;}
+.ptu-line { height:5px; border-radius:4px; margin-bottom:7px; }
+.ptu-row { display:flex; gap:8px; margin-top:10px; }
+.ptu-box { height:28px; border-radius:6px; flex:1; }
+
+.proj-badge { position:absolute; top:14px; left:14px; z-index:2; font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1.5px; padding:4px 12px; border-radius:100px; background:rgba(0,0,0,0.65); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.75); backdrop-filter:blur(8px); }
+.proj-overlay { position:absolute; inset:0; z-index:3; background:linear-gradient(to top,rgba(123,47,255,0.88),transparent 65%); opacity:0; transition:opacity 0.35s; display:flex; align-items:flex-end; padding:20px; }
+.proj-card:hover .proj-overlay { opacity:1; }
+.proj-overlay-link { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; color:#fff; display:flex; align-items:center; gap:8px; cursor:none; }
+.proj-overlay-link span { transition:transform 0.25s; }
+.proj-card:hover .proj-overlay-link span { transform:translateX(4px); }
+
+.proj-body { padding:24px 28px 28px; }
+.proj-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.proj-cat { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px; color:var(--purple); }
+.proj-year { font-family:'Space Mono',monospace; font-size:8px; color:var(--muted); }
+.proj-name { font-family:'Orbitron',monospace; font-size:15px; font-weight:700; color:var(--ink); margin-bottom:8px; line-height:1.3; }
+.proj-desc { font-size:13px; color:var(--mid); line-height:1.75; margin-bottom:16px; }
+.proj-pills { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px; }
+.proj-pill { font-size:9px; font-weight:600; letter-spacing:0.5px; padding:3px 10px; border-radius:100px; background:var(--purple-pale); color:var(--purple); border:1px solid var(--purple-pale2); }
+.proj-result { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--mid); border-top:1px solid var(--border); padding-top:14px; }
+.proj-result-num { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; color:var(--purple); }
+
+/* CTA Strip */
+.port-cta {
+  background:var(--ink); margin:0; padding:0;
+  position:relative; overflow:hidden;
+}
+.port-cta::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 50% 100%,rgba(123,47,255,0.25),transparent); }
+.port-cta-inner { max-width:1200px; margin:0 auto; padding:100px 64px; position:relative; z-index:1; text-align:center; }
+.port-cta-tag { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:4px; color:var(--purple-light); display:block; margin-bottom:16px; }
+.port-cta-title { font-family:'Orbitron',monospace; font-size:clamp(28px,4vw,52px); font-weight:900; color:#fff; line-height:1.1; margin-bottom:16px; }
+.port-cta-title .accent { color:var(--purple-light); }
+.port-cta-sub { font-size:17px; color:rgba(255,255,255,0.45); margin-bottom:48px; line-height:1.8; }
+.port-cta-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+.btn-white { background:#fff; color:var(--purple); border:none; padding:14px 40px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:700; cursor:none; transition:all 0.3s; }
+.btn-white:hover { box-shadow:0 8px 32px rgba(255,255,255,0.2); transform:translateY(-2px); }
+.btn-outline-white { background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.25); padding:14px 40px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:none; transition:all 0.3s; }
+.btn-outline-white:hover { border-color:#fff; }
+
+/* Footer */
+footer { background:var(--white); border-top:1px solid var(--border); padding:60px 64px 40px; }
+.footer-inner { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:24px; }
+.footer-copy { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); }
+.footer-link { font-size:13px; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+.footer-link:hover { color:var(--purple); }
+
+/* Reveal */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.reveal.up { opacity:1; transform:none; }
+.d1{transition-delay:0.08s!important;} .d2{transition-delay:0.16s!important;} .d3{transition-delay:0.24s!important;}
+.d4{transition-delay:0.32s!important;} .d5{transition-delay:0.4s!important;} .d6{transition-delay:0.48s!important;}
+
+/* Contact Modal */
+.modal-overlay { position:fixed; inset:0; z-index:2000; background:rgba(10,10,15,0.7); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.35s ease; padding:20px; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal-card { background:var(--white); border:1px solid var(--border); border-radius:24px; width:100%; max-width:600px; box-shadow:0 40px 100px rgba(123,47,255,0.2); overflow:hidden; transform:scale(0.92) translateY(24px); transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); position:relative; max-height:90vh; overflow-y:auto; }
+.modal-overlay.open .modal-card { transform:scale(1) translateY(0); }
+.modal-top { background:linear-gradient(135deg,var(--ink),var(--ink2)); padding:40px 48px 36px; position:relative; overflow:hidden; }
+.modal-top::before { content:''; position:absolute; right:-60px; top:-60px; width:240px; height:240px; border-radius:50%; background:radial-gradient(circle,rgba(123,47,255,0.25),transparent); }
+.modal-top-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:4px; color:var(--purple-light); margin-bottom:12px; display:block; position:relative; z-index:1; }
+.modal-title { font-family:'Orbitron',monospace; font-size:26px; font-weight:900; color:#fff; margin-bottom:10px; position:relative; z-index:1; }
+.modal-subtitle { font-size:14px; color:rgba(255,255,255,0.5); line-height:1.7; position:relative; z-index:1; }
+.modal-close { position:absolute; top:20px; right:24px; width:36px; height:36px; border-radius:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; font-size:18px; cursor:none; z-index:10; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+.modal-close:hover { background:rgba(255,255,255,0.2); }
+.modal-body { padding:40px 48px 48px; }
+.modal-contact-row { display:flex; gap:16px; margin-bottom:32px; flex-wrap:wrap; }
+.modal-contact-chip { display:flex; align-items:center; gap:10px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:14px 18px; flex:1; min-width:140px; }
+.mcc-label { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px; color:var(--muted); }
+.mcc-val { font-size:13px; font-weight:600; color:var(--ink); margin-top:2px; }
+.modal-form-group { margin-bottom:20px; }
+.modal-form-group label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); display:block; margin-bottom:8px; }
+.modal-form-group input, .modal-form-group textarea, .modal-form-group select { width:100%; background:var(--bg); border:1.5px solid var(--border); border-radius:10px; padding:14px 16px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--ink); transition:border-color 0.25s,box-shadow 0.25s; outline:none; appearance:none; cursor:none; }
+.modal-form-group input:focus, .modal-form-group textarea:focus, .modal-form-group select:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(123,47,255,0.1); }
+.modal-form-group textarea { resize:vertical; min-height:110px; }
+.modal-form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.modal-submit { width:100%; background:var(--purple); color:#fff; border:none; padding:16px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; cursor:none; transition:all 0.3s; margin-top:8px; position:relative; overflow:hidden; }
+.modal-submit::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--purple-light),var(--purple2)); opacity:0; transition:opacity 0.3s; }
+.modal-submit:hover::before { opacity:1; }
+.modal-submit:hover { box-shadow:0 12px 32px rgba(123,47,255,0.4); transform:translateY(-2px); }
+.modal-submit span { position:relative; z-index:1; }
+.modal-note { font-size:12px; color:var(--muted); text-align:center; margin-top:16px; line-height:1.6; }
+.modal-success { display:none; text-align:center; padding:32px 0 16px; }
+.modal-success.show { display:block; }
+.modal-success-icon { font-size:52px; margin-bottom:16px; display:block; }
+.modal-success-title { font-family:'Orbitron',monospace; font-size:20px; font-weight:900; color:var(--ink); margin-bottom:10px; }
+.modal-success-text { font-size:15px; color:var(--mid); line-height:1.75; }
+
+@media(max-width:960px){
+  nav { padding:0 24px; }
+  .port-hero-inner { padding:60px 24px; }
+  .port-hero-stats { gap:28px; flex-wrap:wrap; }
+  .filter-bar-inner { padding:0 24px; }
+  .port-main { padding:40px 24px; }
+  .port-grid { grid-template-columns:1fr; }
+  .proj-card.span2 { grid-column:span 1; }
+  .port-cta-inner { padding:60px 24px; }
+  footer { padding:40px 24px 32px; }
+  .footer-inner { flex-direction:column; align-items:flex-start; }
+  .modal-body { padding:28px 24px 32px; }
+  .modal-top { padding:32px 24px 28px; }
+  .modal-form-row { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<div id="progress"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="oxelyon-updated.html" class="nav-logo-wrap">
+    <div class="nav-logo-text">OXEL<span>Y</span>ON</div>
+  </a>
+  <a href="oxelyon-updated.html" class="nav-back">
+    <span class="nav-back-arrow">←</span> Back to Home
+  </a>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+      <span class="icon-moon">🌙</span>
+      <span class="icon-sun">☀️</span>
+    </button>
+    <button class="nav-cta" onclick="openModal()">Get a Quote →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="port-hero">
+  <div class="port-hero-grid"></div>
+  <div class="port-hero-inner">
+    <span class="port-hero-label">// portfolio · case studies</span>
+    <h1 class="port-hero-title">Products We've<br><span class="accent">Shipped.</span></h1>
+    <p class="port-hero-sub">50+ projects across web, mobile, embedded, IoT, and enterprise systems. Real outcomes for real clients.</p>
+    <div class="port-hero-stats">
+      <div><div class="phs-num">50<span>+</span></div><div class="phs-label">Projects Shipped</div></div>
+      <div><div class="phs-num">18<span>+</span></div><div class="phs-label">Industries</div></div>
+      <div><div class="phs-num">98<span>%</span></div><div class="phs-label">Client Satisfaction</div></div>
+      <div><div class="phs-num">12<span>M+</span></div><div class="phs-label">End Users Reached</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FILTER -->
+<div class="filter-bar">
+  <div class="filter-bar-inner">
+    <button class="fb-btn active" onclick="filterProjects(this,'all')">ALL WORK</button>
+    <button class="fb-btn" onclick="filterProjects(this,'web')">WEB</button>
+    <button class="fb-btn" onclick="filterProjects(this,'mobile')">MOBILE</button>
+    <button class="fb-btn" onclick="filterProjects(this,'embedded')">EMBEDDED</button>
+    <button class="fb-btn" onclick="filterProjects(this,'iot')">IoT</button>
+    <button class="fb-btn" onclick="filterProjects(this,'erp')">ERP</button>
+    <button class="fb-btn" onclick="filterProjects(this,'automation')">AUTOMATION</button>
+    <span class="fb-count" id="projCount">12 PROJECTS</span>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div class="port-main">
+  <div class="port-grid" id="projGrid">
+
+    <!-- 1 — RetailNova ERP (featured) -->
+    <div class="proj-card span2 reveal d1" data-cat="erp web">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-purple"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(163,102,255,0.5);width:80%;"></div>
+            <div class="ptu-line" style="background:rgba(163,102,255,0.3);width:55%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.1);width:70%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(123,47,255,0.5);"></div>
+              <div class="ptu-box" style="background:rgba(255,255,255,0.08);flex:2;"></div>
+              <div class="ptu-box" style="background:rgba(123,47,255,0.3);"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">ERP · FEATURED</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">ERP SYSTEM</span><span class="proj-year">2025</span></div>
+        <div class="proj-name">RetailNova Operations Hub</div>
+        <p class="proj-desc">End-to-end ERP unifying inventory management, POS, HR, finance, and supply chain for a 120-store retail chain across 3 states. Real-time dashboards, role-based access, and automated reporting eliminated an entire team of data entry operators.</p>
+        <div class="proj-pills"><span class="proj-pill">Next.js</span><span class="proj-pill">Node.js</span><span class="proj-pill">PostgreSQL</span><span class="proj-pill">Redis</span><span class="proj-pill">AWS</span><span class="proj-pill">Odoo</span></div>
+        <div class="proj-result"><div class="proj-result-num">60%</div> reduction in manual ops · <div class="proj-result-num" style="margin-left:16px;">₹2.4Cr</div> saved in year one</div>
+      </div>
+    </div>
+
+    <!-- 2 — FitTrackr Mobile -->
+    <div class="proj-card reveal d2" data-cat="mobile">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-blue"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window" style="width:55%;">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(77,166,255,0.5);width:70%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.1);width:50%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(77,166,255,0.4);"></div>
+              <div class="ptu-box" style="background:rgba(77,166,255,0.2);"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">MOBILE APP</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">MOBILE APP</span><span class="proj-year">2024</span></div>
+        <div class="proj-name">FitTrackr</div>
+        <p class="proj-desc">Cross-platform fitness tracking app with AI coaching, wearable sync, and social challenges. From design to launch in 6 weeks.</p>
+        <div class="proj-pills"><span class="proj-pill">Flutter</span><span class="proj-pill">Firebase</span><span class="proj-pill">ML Kit</span></div>
+        <div class="proj-result"><div class="proj-result-num">10K</div> users in launch month · 4.9★ rating</div>
+      </div>
+    </div>
+
+    <!-- 3 — GridSense IoT -->
+    <div class="proj-card reveal d3" data-cat="iot embedded">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-green"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(39,201,63,0.5);width:80%;"></div>
+            <div class="ptu-line" style="background:rgba(39,201,63,0.25);width:55%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(39,201,63,0.35);"></div>
+              <div class="ptu-box" style="background:rgba(255,255,255,0.07);flex:2;"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">IoT · EMBEDDED</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">IoT SYSTEM</span><span class="proj-year">2025</span></div>
+        <div class="proj-name">GridSense Smart Meters</div>
+        <p class="proj-desc">LoRaWAN-enabled energy monitoring nodes with custom PCB, FreeRTOS firmware, and real-time cloud telemetry dashboard for 5,000 industrial units.</p>
+        <div class="proj-pills"><span class="proj-pill">STM32</span><span class="proj-pill">LoRaWAN</span><span class="proj-pill">AWS IoT</span><span class="proj-pill">KiCad</span></div>
+        <div class="proj-result"><div class="proj-result-num">5,000</div> units deployed · <div class="proj-result-num" style="margin-left:16px;">99.7%</div> uptime</div>
+      </div>
+    </div>
+
+    <!-- 4 — LogiStream Bots -->
+    <div class="proj-card reveal d1" data-cat="automation web">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-amber"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(255,179,71,0.5);width:70%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.1);width:45%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(255,179,71,0.35);"></div>
+              <div class="ptu-box" style="background:rgba(255,255,255,0.07);flex:2;"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">AUTOMATION</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">WEB · AUTOMATION</span><span class="proj-year">2024</span></div>
+        <div class="proj-name">LogiStream Bot Suite</div>
+        <p class="proj-desc">RPA bot cluster handling freight invoice processing, dispatch scheduling, and 3PL API sync — 24/7, zero errors.</p>
+        <div class="proj-pills"><span class="proj-pill">Python</span><span class="proj-pill">RPA</span><span class="proj-pill">FastAPI</span><span class="proj-pill">Celery</span></div>
+        <div class="proj-result"><div class="proj-result-num">40+</div> hrs/week saved · ROI in 30 days</div>
+      </div>
+    </div>
+
+    <!-- 5 — NeuroSense PCB (featured) -->
+    <div class="proj-card span2 reveal d2" data-cat="embedded">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-rose"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(163,102,255,0.6);width:75%;"></div>
+            <div class="ptu-line" style="background:rgba(255,100,150,0.3);width:50%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.08);width:65%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(163,102,255,0.4);"></div>
+              <div class="ptu-box" style="background:rgba(163,102,255,0.2);flex:2;"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">PCB · FIRMWARE · FEATURED</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">EMBEDDED SYSTEM</span><span class="proj-year">2025</span></div>
+        <div class="proj-name">NeuroSense Motor Driver Board</div>
+        <p class="proj-desc">4-layer HDI PCB with integrated gate drivers, current sensing, and isolated feedback for a precision BLDC motor controller used in surgical robotics. Full FreeRTOS firmware stack with CAN bus integration, adaptive PID, and over-the-air updates.</p>
+        <div class="proj-pills"><span class="proj-pill">KiCad</span><span class="proj-pill">STM32H7</span><span class="proj-pill">FreeRTOS</span><span class="proj-pill">CAN FD</span><span class="proj-pill">DRV8305</span></div>
+        <div class="proj-result"><div class="proj-result-num">4-layer</div> HDI PCB · <div class="proj-result-num" style="margin-left:16px;">&lt;2μs</div> control loop latency</div>
+      </div>
+    </div>
+
+    <!-- 6 — CloudSync Web App -->
+    <div class="proj-card reveal d3" data-cat="web">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-teal"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(0,210,200,0.45);width:80%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.1);width:50%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(0,210,200,0.3);"></div>
+              <div class="ptu-box" style="background:rgba(255,255,255,0.07);flex:2;"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">WEB APP · SaaS</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">WEB APP</span><span class="proj-year">2024</span></div>
+        <div class="proj-name">CloudSync Dashboard</div>
+        <p class="proj-desc">Multi-tenant SaaS analytics platform with real-time pipeline monitoring for a DevOps consultancy serving 200+ enterprise clients.</p>
+        <div class="proj-pills"><span class="proj-pill">React</span><span class="proj-pill">GraphQL</span><span class="proj-pill">TimescaleDB</span></div>
+        <div class="proj-result"><div class="proj-result-num">200+</div> enterprise tenants · 99.99% SLA</div>
+      </div>
+    </div>
+
+    <!-- 7 — AgroNode IoT -->
+    <div class="proj-card reveal d1" data-cat="iot embedded">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-green" style="filter:hue-rotate(40deg);"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(100,210,100,0.5);width:70%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.1);width:45%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(100,210,100,0.35);"></div>
+              <div class="ptu-box" style="background:rgba(255,255,255,0.07);"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">IoT · AGRICULTURE</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">IoT · AGRITECH</span><span class="proj-year">2024</span></div>
+        <div class="proj-name">AgroNode Field Sensors</div>
+        <p class="proj-desc">Solar-powered soil & weather sensor network with ESP32-C6 nodes, BLE mesh, and AI-driven irrigation recommendations.</p>
+        <div class="proj-pills"><span class="proj-pill">ESP32</span><span class="proj-pill">BLE Mesh</span><span class="proj-pill">MQTT</span></div>
+        <div class="proj-result"><div class="proj-result-num">30%</div> water reduction · 1,200 farm nodes</div>
+      </div>
+    </div>
+
+    <!-- 8 — MediTrack Mobile -->
+    <div class="proj-card reveal d2" data-cat="mobile web">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-navy"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window" style="width:55%;">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(100,150,255,0.5);width:80%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.1);width:55%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(100,150,255,0.35);"></div>
+              <div class="ptu-box" style="background:rgba(100,150,255,0.15);"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">HEALTHTECH</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">MOBILE · WEB</span><span class="proj-year">2025</span></div>
+        <div class="proj-name">MediTrack Patient Portal</div>
+        <p class="proj-desc">Patient-facing mobile + web app for appointment management, lab results, and doctor messaging for a 40-clinic hospital group.</p>
+        <div class="proj-pills"><span class="proj-pill">Flutter</span><span class="proj-pill">Next.js</span><span class="proj-pill">HL7 FHIR</span></div>
+        <div class="proj-result"><div class="proj-result-num">85K</div> active patients · HIPAA compliant</div>
+      </div>
+    </div>
+
+    <!-- 9 — PowerEdge Firmware -->
+    <div class="proj-card reveal d3" data-cat="embedded">
+      <div class="proj-thumb">
+        <div class="proj-thumb-bg pt-crimson"></div>
+        <div class="proj-thumb-ui">
+          <div class="ptu-window">
+            <div class="ptu-bar"><div class="ptu-dot"></div><div class="ptu-dot"></div><div class="ptu-dot"></div></div>
+            <div class="ptu-line" style="background:rgba(255,70,100,0.5);width:75%;"></div>
+            <div class="ptu-line" style="background:rgba(255,255,255,0.1);width:50%;"></div>
+            <div class="ptu-row">
+              <div class="ptu-box" style="background:rgba(255,70,100,0.35);"></div>
+              <div class="ptu-box" style="background:rgba(255,255,255,0.07);flex:2;"></div>
+            </div>
+          </div>
+        </div>
+        <span class="proj-badge">FIRMWARE · DSP</span>
+        <div class="proj-overlay"><div class="proj-overlay-link">VIEW FULL CASE STUDY <span>→</span></div></div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-meta"><span class="proj-cat">FIRMWARE · DSP</span><span class="proj-year">2025</span></div>
+        <div class="proj-name">PowerEdge Inverter Firmware</div>
+        <p class="proj-desc">Real-time DSP firmware for a 3-phase grid-tie solar inverter. Custom SPWM generation, harmonic filtering, and fault protection on STM32G4.</p>
+        <div class="proj-pills"><span class="proj-pill">STM32G4</span><span class="proj-pill">CMSIS-DSP</span><span class="proj-pill">SPWM</span></div>
+        <div class="proj-result"><div class="proj-result-num">97.8%</div> inverter efficiency achieved</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="port-cta">
+  <div class="port-cta-inner">
+    <span class="port-cta-tag">// start your project</span>
+    <h2 class="port-cta-title">Your Product Could<br>Be <span class="accent">Next.</span></h2>
+    <p class="port-cta-sub">We're selective about the projects we take on — which means we go all-in on yours.</p>
+    <div class="port-cta-btns">
+      <button class="btn-white" onclick="openModal()">Start a Project</button>
+      <button class="btn-outline-white" onclick="openModal()">Schedule a Call →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="oxelyon-updated.html" class="nav-logo-wrap" style="text-decoration:none;">
+      <div class="nav-logo-text">OXEL<span>Y</span>ON</div>
+    </a>
+    <span class="footer-copy">© 2026 OXELYON TECHNOLOGIES</span>
+    <a href="oxelyon-updated.html" class="footer-link">← Back to Home</a>
+  </div>
+</footer>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="contactModal" onclick="handleOverlayClick(event)">
+  <div class="modal-card">
+    <div class="modal-top">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <span class="modal-top-label">// let's build together</span>
+      <div class="modal-title">Start Your Project</div>
+      <p class="modal-subtitle">Tell us what you're building. We'll respond with a tailored proposal within 24 hours.</p>
+    </div>
+    <div class="modal-body">
+      <div class="modal-contact-row">
+        <div class="modal-contact-chip"><span style="font-size:18px;">📧</span><div><div class="mcc-label">EMAIL US</div><div class="mcc-val">info@oxelyon.com</div></div></div>
+        <div class="modal-contact-chip"><span style="font-size:18px;">📞</span><div><div class="mcc-label">CALL US</div><div class="mcc-val">+91 7994773657</div></div></div>
+        <div class="modal-contact-chip"><span style="font-size:18px;">⏱️</span><div><div class="mcc-label">RESPONSE</div><div class="mcc-val">Within 24 hrs</div></div></div>
+      </div>
+      <div id="contactForm">
+        <div class="modal-form-row">
+          <div class="modal-form-group"><label>YOUR NAME</label><input type="text" placeholder="Arjun Kapoor" id="mName" /></div>
+          <div class="modal-form-group"><label>EMAIL ADDRESS</label><input type="email" placeholder="arjun@company.com" id="mEmail" /></div>
+        </div>
+        <div class="modal-form-group">
+          <label>SERVICE NEEDED</label>
+          <select id="mService">
+            <option value="">Select a service…</option>
+            <option>Web Application</option><option>Mobile App</option>
+            <option>PCB Design</option><option>Firmware Development</option>
+            <option>IoT Systems</option><option>ERP Software</option>
+            <option>Automation Bots</option><option>Cloud & DevOps</option>
+            <option>Other / Not Sure</option>
+          </select>
+        </div>
+        <div class="modal-form-group"><label>PROJECT BRIEF</label><textarea placeholder="Describe your idea, goals, timeline, or any questions…" id="mMessage"></textarea></div>
+        <button class="modal-submit" onclick="submitForm()"><span>Send Project Brief →</span></button>
+        <p class="modal-note">🔒 Your information is kept private. No spam, ever.</p>
+      </div>
+      <div class="modal-success" id="modalSuccess">
+        <span class="modal-success-icon">🚀</span>
+        <div class="modal-success-title">Brief Received!</div>
+        <p class="modal-success-text">Our team will review your project and respond within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+emailjs.init('SzdbWBSDC0uxHKJ88');
+// Theme toggle
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  localStorage.setItem('oxelyon-theme',isDark?'light':'dark');
+}
+(function(){
+  const saved=localStorage.getItem('oxelyon-theme');
+  if(saved) document.documentElement.setAttribute('data-theme',saved);
+})();
+
+// Cursor
+const cur=document.getElementById('cursor'),trail=document.getElementById('cursor-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){tx+=(mx-tx)*0.14;ty+=(my-ty)*0.14;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(a);})();
+
+// Scroll progress + nav
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY,dh=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('progress').style.width=(s/dh*100)+'%';
+  document.getElementById('nav').classList.toggle('scrolled',s>60);
+});
+
+// Reveal
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('up');});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Filter
+function filterProjects(btn, cat){
+  document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards=document.querySelectorAll('.proj-card');
+  let vis=0;
+  cards.forEach(card=>{
+    const c=card.dataset.cat||'';
+    const show=cat==='all'||c.includes(cat);
+    card.style.opacity=show?'1':'0.15';
+    card.style.pointerEvents=show?'':'none';
+    if(show) vis++;
+  });
+  document.getElementById('projCount').textContent=vis+' PROJECT'+(vis!==1?'S':'');
+}
+
+// Modal
+function openModal(){document.getElementById('contactModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('contactModal').classList.remove('open');document.body.style.overflow='';}
+function handleOverlayClick(e){if(e.target===document.getElementById('contactModal'))closeModal();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function submitForm(){
+  const name=document.getElementById('mName').value.trim();
+  const email=document.getElementById('mEmail').value.trim();
+  const service=document.getElementById('mService').value;
+  const message=document.getElementById('mMessage').value.trim();
+  if(!name||!email){alert('Please fill in your name and email.');return;}
+  const btn=document.querySelector('.modal-submit');
+  btn.disabled=true;
+  btn.querySelector('span').textContent='Sending…';
+  emailjs.send('service_2no5kfa','template_bxosk11',{
+    from_name: name,
+    from_email: email,
+    company: '—',
+    service: service||'—',
+    budget: '—',
+    message: message||'—'
+  })
+  .then(()=>{
+    document.getElementById('contactForm').style.display='none';
+    document.getElementById('modalSuccess').classList.add('show');
+    btn.disabled=false;
+    btn.querySelector('span').textContent='Send Project Brief →';
+    document.getElementById('mName').value='';
+    document.getElementById('mEmail').value='';
+    document.getElementById('mService').selectedIndex=0;
+    document.getElementById('mMessage').value='';
+    setTimeout(()=>{closeModal();setTimeout(()=>{document.getElementById('contactForm').style.display='block';document.getElementById('modalSuccess').classList.remove('show');},400);},3200);
+  })
+  .catch(err=>{
+    console.error('EmailJS error:',err);
+    alert('Something went wrong. Please try again or email us at info@oxelyon.com');
+    btn.disabled=false;
+    btn.querySelector('span').textContent='Send Project Brief →';
+  });
+}
+</script>
+</body>
+</html>
